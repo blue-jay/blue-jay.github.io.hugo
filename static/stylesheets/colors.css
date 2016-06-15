@@ -1,0 +1,56 @@
+@supports (-webkit-appearance: none) {
+    .palette-primary-jayblue {
+        background: #16b1f5
+    }
+}
+
+.palette-primary-jayblue .footer, .palette-primary-jayblue .header {
+    background: #16b1f5
+}
+
+.palette-primary-jayblue .drawer .toc a.current, .palette-primary-jayblue .drawer .toc a:focus, .palette-primary-jayblue .drawer .toc a:hover {
+    color: #16b1f5
+}
+
+.palette-primary-jayblue .drawer .anchor a {
+    border-left: 2px solid #16b1f5
+}
+
+.ios.standalone .palette-primary-jayblue .article {
+    background: -webkit-linear-gradient(top, #fff 50%, #16b1f5 0);
+    background: linear-gradient(180deg, #fff 50%, #16b1f5 0)
+}
+
+.palette-primary-jayblue .article a, .palette-primary-jayblue .article code, .palette-primary-jayblue .article h1, .palette-primary-jayblue .article h2 {
+    color: #16b1f5
+}
+
+.palette-primary-jayblue .article .headerlink {
+    color: rgba(0, 0, 0, .26)
+}
+
+.palette-primary-jayblue .article table th {
+    background: #40cddf
+}
+
+.palette-primary-jayblue .results .meta {
+    background: #16b1f5
+}
+
+.palette-accent-jayblue .article a:focus, .palette-accent-jayblue .article a:hover {
+    color: #00b8d4
+}
+
+.palette-accent-jayblue .repo a {
+    background: #00b8d4
+}
+
+@media only screen and (max-width: 959px) {
+    .palette-primary-jayblue .project {
+        background: #16b1f5
+    }
+}
+
+.palette-accent-amber .repo a {
+    background: #87d4f4;
+}

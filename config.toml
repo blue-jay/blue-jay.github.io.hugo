@@ -1,0 +1,69 @@
+baseurl = "http://blue-jay.github.io/"
+languageCode = "en-us"
+title = "Blue Jay"
+
+theme = "hugo-material-docs"
+metadataformat = "yaml"
+canonifyurls = true
+googleAnalytics = ""
+
+[params]
+# General information
+author = "Joseph Spurrier"
+description = "Blue Jay is a toolkit written in Go for the web."
+copyright = "Released under the MIT license"
+
+# Repository
+provider = "GitHub"
+repo_url = "https://github.com/blue-jay/blueprint"
+
+version = "0.1-alpha"
+logo = "images/bluejaylogo.png"
+favicon = ""
+
+permalink = "#"
+
+# Custom assets
+custom_css = ['stylesheets/global.css', 'stylesheets/colors.css']
+custom_js  = []
+
+# Syntax highlighting theme
+highlight_css  = ""
+
+[params.palette]
+primary = "jayblue"
+accent  = "amber"
+
+[params.font]
+text = "Ubuntu"
+code = "Ubuntu Mono"
+
+[social]
+twitter = ""
+github  = "blue-jay"
+
+[[menu.main]]
+name   = "Toolkit Overview"
+url    = "/"
+weight = 0
+
+[[menu.main]]
+name   = "Configuration"
+url    = "configuration/"
+weight = 10
+
+[[menu.main]]
+name   = "Controllers"
+url    = "controllers/"
+weight = 20
+
+[[menu.main]]
+name   = "Views"
+url    = "views/"
+weight = 30
+
+[blackfriday]
+smartypants	= true
+fractions = true
+smartDashes = true
+plainIDAnchors = true
