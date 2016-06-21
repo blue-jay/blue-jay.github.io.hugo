@@ -1,7 +1,7 @@
 ---
 date: 2016-03-08T21:07:13+01:00
 title: Views
-weight: 30
+weight: 60
 ---
 
 ## Basic Usage
@@ -171,4 +171,18 @@ It's also easy to add template-specific code before the closing </head> and </bo
 
 <!-- Code is added before the closing </body> tag -->
 {{define "foot"}}{{JS "//www.google.com/recaptcha/api.js"}}{{end}}
+```
+
+## JavaScript
+
+There are a few built-in functions that you can use to trigger a flash notification using JavaScript.
+
+```javascript
+flashError("An error occurred on the server.");
+
+flashSuccess("Item added!");
+
+flashNotice("Item deleted.");
+
+flashWarning("Field missing: email");
 ```

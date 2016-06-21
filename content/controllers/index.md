@@ -1,117 +1,102 @@
 ---
 date: 2016-03-08T21:07:13+01:00
 title: Controllers
-weight: 20
+weight: 40
 ---
 
 ## Basic Usage
 
-The controller files are all organized under the **controller** folder. The controllers
-handle much of the interactions between the models and the views as well as specify
-which routes map to which functions.
+The controller files are all organized under the **controller** folder. The
+controllers handle the interactions between the models and the views as well as
+specify which routes to map to which functions.
 
-## Routing
+It's a good idea to follow a naming convention for the different pieces.
+Laravel developers will notice it's the same convention Taylor Orwell uses.
 
-In the **bootstrap** package, the **RegisterServices()** function calls: `controller.LoadRoutes()`
-The **LoadRoutes()** function in the **controller** package loads the routes for each of the individual controllers:
+| Method | Path              | Function | View        |
+|:------:|:-----------------:|:--------:|:------------:
+| GET    | /notepad          | Index    | index.tmpl  |
+| GET    | /notepad/create   | Create   | create.tmpl |
+| POST   | /notepad          | Store    |             |
+| GET    | /notepad/view/:id | Show     | show.tmpl   |
+| GET    | /notepad/edit/:id | Edit     | edit.tmpl   |
+| PATCH  | /notepad/edit/:id | Update   |             |
+| DELETE | /notepad/:id      | index    |             |
 
-```go
-// LoadRoutes loads the routes for each of the controllers
-func LoadRoutes() {
-	about.Load()
-	debug.Load()
-	auth.LoadRegister()
-	auth.LoadLogin()
-	core.LoadIndex()
-	core.LoadError()
-	core.LoadStatic()
-	notepad.Load()
-}
-```
-
-Here is the **Load()** function from the **controller/notepad** package:
+For example, below is a controller that follows the naming convention. Notice
+the model name ("note") matches the view folder ("note/index"). The model does
+not need to match the controller because you'll be working with many different
+models in your controllers.
 
 ```go
-var (
-	uri = "/notepad"
-)
-
 func Load() {
-	c := router.Chain(acl.DisallowAnon)
-	router.Get(uri, Index, c...)
-	router.Get(uri+"/create", Create, c...)
-	router.Post(uri, Store, c...)
-	router.Get(uri+"/view/:id", Show, c...)
-	router.Get(uri+"/edit/:id", Edit, c...)
-	router.Patch(uri+"/edit/:id", Update, c...)
-	router.Delete(uri+"/:id", Destroy, c...)
+	...
+	// "Get" is the Method
+	// "/notepad" is the Path
+	router.Get("/notepad", Index, acl.DisallowAnon)
+	...
+}
+
+// "Index" is the Function
+func Index(w http.ResponseWriter, r *http.Request) {
+	c := flight.Context(w, r)
+
+	items, err := note.ByUserID(c.UserID)
+	if err != nil {
+		c.FlashError(err)
+		items = []note.Item{}
+	}
+
+	// "index" is the View
+	v := view.New("note/index")
+	v.Vars["first_name"] = c.Sess.Values["first_name"]
+	v.Vars["items"] = items
+	v.Render(w, r)
 }
 ```
 
-There are a few things to note here. The **router** references the **lib/router** package
-which is a wrapper for the [julienschmidt/httprouter](http://github.com/julienschmidt/httprouter) package.
-The **router.Chain()** function uses the [justinas/alice](http://github.com/justinas/alice) package
-to help with middleware chaining.
-
-This may start to sound like a framework, but it's actually a good way to build your wrapper
-packages that live in the **lib** folder. If you want to use a different router, you can modify
-the **lib/router** package easily and you won't have to change any code in your controllers.
-
-It's a good idea to follow a naming convention for the controller functions (Laravel developers
-will notice it's the same convention Taylor Orwell uses).
-
-
-### These are a few things you can do with controllers.
-
-Access a gorilla session:
+## Access a Session
 
 ```go
 // Get the current session
 sess := session.Instance(r)
 ...
-// Close the session after you are finished making changes
+// Save the session after you are finished making changes
 sess.Save(r, w)
 ```
 
-Trigger 1 of 4 different types of flash messages on the next page load (no other code needed):
+## Trigger Flash Message
 
 ```go
 sess.AddFlash(view.Flash{"Sorry, no brute force :-)", view.FlashNotice})
 sess.Save(r, w) // Ensure you save the session after making a change to it
 ```
 
-Validate form fields are not empty:
+## Validate a Form
 
 ```go
-// Ensure a user submitted all the required form fields
-if validate, missingField := view.Validate(r, []string{"email", "password"}); !validate {
-	sess.AddFlash(view.Flash{"Field missing: " + missingField, view.FlashError})
+if validate, missingField := form.Required(r, "email", "password"); !validate {
+	sess.AddFlash(flash.Info{"Field missing: " + missingField, flash.Error})
 	sess.Save(r, w)
 	LoginGET(w, r)
 	return
 }
 ```
 
-Render a template:
+## Render a Template
 
 ```go
-// Create a new view
-v := view.New(r)
-
 // Set the template name
-v.Name = "login/login"
+v := view.New("auth/login")
 
-// Assign a variable that is accessible in the form
-v.Vars["token"] = csrfbanana.Token(w, r, sess)
-
-// Refill any form fields from a POST operation
-view.Repopulate([]string{"email"}, r.Form, v.Vars)
+// Refill form fields from a POST operation
+form.Repopulate(r.Form, v.Vars, "email")
 
 // Render the template
-v.Render(w)
+v.Render(w, r)
 ```
 
-Return the flash messages during an Ajax request:
+## Return Flash over Ajax
 
 ```go
 // Get session
@@ -126,13 +111,13 @@ v := view.New(r)
 v.SendFlashes(w)
 ```
 
-Handle the database query:
+## Interact with a Model
 
 ```go
 // Get database result
-result, err := model.UserByEmail(email)
+result, err := user.ByEmail(email)
 
-if err == sql.ErrNoRows {
+if err == model.ErrNoResult {
 	// User does not exist
 } else if err != nil {
 	// Display error message
@@ -143,27 +128,15 @@ if err == sql.ErrNoRows {
 }
 ```
 
-Send an email:
+## Send an Email
 
 ```go
 // Email a user
-err := email.SendEmail(email.ReadConfig().From, "This is the subject", "This is the body!")
+err := email.Send(email.ReadConfig().From, "This is the subject", "This is the body!")
 if err != nil {
 	log.Println(err)
 	sess.AddFlash(view.Flash{"An error occurred on the server. Please try again later.", view.FlashError})
 	sess.Save(r, w)
-	return
-}
-```
-
-Validate a form if the Google reCAPTCHA is enabled in the config:
-
-```go
-// Validate with Google reCAPTCHA
-if !recaptcha.Verified(r) {
-	sess.AddFlash(view.Flash{"reCAPTCHA invalid!", view.FlashError})
-	sess.Save(r, w)
-	RegisterGET(w, r)
 	return
 }
 ```

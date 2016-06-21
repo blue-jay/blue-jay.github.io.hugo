@@ -9,8 +9,8 @@ weight: 10
 Throughout this documentation, keep in mind everything in Blueprint is configurable.
 You are not using a framework so you don't have to follow rules. You don't need to
 use any of the components with Blueprint, but it does give you a nice foundation to
-start from. If you want to use YAML instead of JSON, I recommend creating a wrapper
-library in the **lib** folder and then loading your env.yaml file via the **bootstrap**
+start from. If you want to use YAML instead of JSON, it's recommended to create a wrapper
+library in the **lib** folder and then load your env.yaml file via the **bootstrap**
 package.
 
 One of the first steps before using Blueprint is to create **env.json**. You can make
@@ -81,9 +81,9 @@ in the **bootstrap** package. Here is an example **env.json**:
 
 The **env.json** file contains the configuration for Blueprint. It removes the need
 to hardcode any of these values and makes it easy to move Blueprint to another system
-with a different set up.
+with a different setup.
 
-The **env.json** file is parsed and the result is stored in the **Info** struct from the
+The **env.json** file is parsed and the result is organized in the **Info** struct from the
 **bootstrap** package:
 
 ```go
@@ -114,7 +114,7 @@ View		- View struct in lib/view
 
 To enable HTTPS:
 
-1. Set **UseHTTPS** to true
+1. Set **UseHTTPS** to **true**
 1. Create a folder called **tls** in the project root folder 
 1. Place your own certificate and key files in the **tls** folder
 

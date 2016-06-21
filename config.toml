@@ -53,14 +53,29 @@ url    = "configuration/"
 weight = 10
 
 [[menu.main]]
+name   = "Routing"
+url    = "routing/"
+weight = 20
+
+[[menu.main]]
+name   = "Middleware"
+url    = "middleware/"
+weight = 30
+
+[[menu.main]]
 name   = "Controllers"
 url    = "controllers/"
-weight = 20
+weight = 40
+
+[[menu.main]]
+name   = "Models"
+url    = "models/"
+weight = 50
 
 [[menu.main]]
 name   = "Views"
 url    = "views/"
-weight = 30
+weight = 60
 
 [blackfriday]
 smartypants	= true

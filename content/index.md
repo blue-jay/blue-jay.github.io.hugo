@@ -8,23 +8,27 @@ weight: 0
 [![Go Report Card](https://goreportcard.com/badge/github.com/blue-jay/blueprint)](https://goreportcard.com/report/github.com/blue-jay/blueprint)
 [![GoDoc](https://godoc.org/github.com/blue-jay/blueprint?status.svg)](https://godoc.org/github.com/blue-jay/blueprint)
 
-Blue Jay is a toolkit designed to get your web application off the ground. It's a collection of command line tools along with a web blueprint that is flexible enough to fit any project, yet provides a foundation so you can focus on the task instead of designing your own tools. You can easily change the structure and there is no rigid framework to which you have to conform. Even the command line tools like code generation and database migration are portable so they can be used outside your project.
+Blue Jay is a web toolkit for [Go](https://golang.org/). It's a collection of command-line tools and a web blueprint that allows you to easily structure your web application. There is no rigid framework to which you have to conform.
 
 There are a few components:
 
-- **Blueprint** is a model-view-controller (MVC) style web skeleton
+- [**Blueprint**](https://github.com/blue-jay/blueprint) is a model-view-controller (MVC) style web skeleton.
 
-- **Jay** is a command line tool with modules for find/replace, database migrations, and code generation
+- [**Jay**](https://github.com/blue-jay/jay) is a command line tool with modules for find/replace, database migrations, and code generation.
 
 ## Why Blue Jay?
 
-There are a few web frameworks for Go, but we support the Go mentality that you should keep
-your application dependency lean. Less dependencies means less bugs.
-It's also great to start developing your application right away instead of learning
-all the features of a framework and then developing once you are proficient enough.
-Blue Jay provides a lean web skeleton called Blueprint to demonstrate how to structure
-a web application without locking developers to a framework. Blueprint includes well thought out
-example code that demonstrates a typical web workflow.
+### Fun Answer
+After 300 stars on GitHub, I realized people really liked the boilerplate 
+Model-View-Controller (MVC) web application in Go called
+[gowebapp](https://github.com/josephspurrier/gowebapp) so I gave it a better
+name and improved the documentation.
+
+### Real Answer
+Go is a blast to code in and it's great being part of a helpful community.
+Blue Jay provides a quickstart for developers with a lean web skeleton called
+**Blueprint** that demonstrates how to structure a web application with sample
+code.
 
 One of the things you'll notice while using Blueprint is how to abstract out
 external packages to make it easy to swap out components. Ultimately, you should
@@ -34,11 +38,10 @@ folder is a great place for all these packages with very few dependencies.
 You'll also notice certain packages need to be thread-safe when building web applications.
 An example is the **lib/view** package which provides thread-safe template caching.
 
-The other reason for Blue Jay is the command line tools in **jay**. jay provides an easy way
+The other reason for Blue Jay is the command-line tool, **jay**, which provides an easy way
 to find/replace in a project when refactoring, migrate your database forwards or backwards, and
 generate a file or sets or files using the Go [html/template](https://golang.org/pkg/html/template/)
-package. Code generation can help you build faster and more efficiently which is a perfect compliment
-to Blueprint.
+package. Code generation can help you build faster and more efficiently with less mistakes.
 
 ## Why Go?
 
@@ -48,11 +51,10 @@ many other tools necessary to build a web application. Any features missing from
 written by other Go developers who are happy to contribute to the thriving community.
 
 Go allows you to write code that compiles to the majority of the architectures we use today so all your
-code is pretty much portable. Go accels when you want to write command line apps instead of just scripts,
+code is pretty much portable. Go excels when you want to write command line apps instead of just scripts,
 but that's not the language's only niche.
 The designers of Go wanted to build a language that solved problems between the Google development teams.
-It's a modern language that allows you to easily multi-thread your applications safely so you can use the
-power of the hardware.
+It's a modern language that allows you to easily multi-thread your applications.
 
 ## High Level
 
@@ -119,68 +121,6 @@ github.com/julienschmidt/httprouter 	- high performance HTTP request router
 github.com/justinas/alice				- middleware chaining
 golang.org/x/crypto/bcrypt 				- password hashing algorithm
 ```
-
-## JavaScript
-
-You can trigger a flash notification using JavaScript.
-
-```javascript
-flashError("You must type in a username.");
-
-flashSuccess("Record created!");
-
-flashNotice("There seems to be a piece missing.");
-
-flashWarning("Something does not seem right...");
-```
-
-
-
-## Database
-
-It's a good idea to abstract the database layer out so if you need to make 
-changes, you don't have to look through business logic to find the queries. All
-the queries are stored in the models folder.
-
-This project supports BoltDB, MongoDB, and MySQL. All the queries are stored in
-the same files so you can easily change the database without modifying anything
-but the config file.
-
-The user.go and note.go files are at the root of the model directory and are a
-compliation of all the queries for each database type. There are a few hacks in
-the models to get the structs to work with all the supported databases.
-
-Connect to the database (only once needed in your application):
-
-```go
-// Connect to database
-database.Connect(config.Database)
-```
-
-Read from the database:
-
-```go
-result := User{}
-err := database.DB.Get(&result, "SELECT id, password, status_id, first_name FROM user WHERE email = ? LIMIT 1", email)
-return result, err
-```
-
-Write to the database:
-
-```go
-_, err := database.DB.Exec("INSERT INTO user (first_name, last_name, email, password) VALUES (?,?,?,?)", firstName, lastName, email, password)
-return err
-```
-
-## Middleware
-
-There are a few pieces of middleware included. The package called csrfbanana 
-protects against Cross-Site Request Forgery attacks and prevents double submits. 
-The package httprouterwrapper provides helper functions to make funcs compatible 
-with httprouter. The package logrequest will log every request made against the 
-website to the console. The package pprofhandler enables pprof so it will work 
-with httprouter. In route.go, all the individual routes use alice to make 
-chaining very easy.
 
 ## Screenshots
 
