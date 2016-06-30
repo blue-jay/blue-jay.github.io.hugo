@@ -33,12 +33,12 @@ warning messages should display to the
 user or in the console. Informational messages are displayed to the user via 
 flash messages that disappear after 4 seconds.
 
-Blueprint also works well with [npm](https://www.npmjs.com/),
-[Bower](https://bower.io/), and [Gulp](http://gulpjs.com/). A Gulp script is
+Blueprint also works well with [npm](https://www.npmjs.com/) and
+[Gulp](http://gulpjs.com/). A Gulp script is
 included that automates the compiling of SASS, concatenation of JavaScript,
 generation of favicons, and copying of static assets like Bootstrap and jQuery
-from Bower to the **asset/static** folder. They are great tools that speed up
-web development significantly.
+managed by npm to the **asset/static** folder. They are great tools that speed up
+web development.
 
 ## Quick Start with MySQL
 
@@ -76,10 +76,9 @@ The following files exist at the project root:
 
 ```text
 blueprint.go     - entrypoint for the application
-bower.json       - Bower configuration that manages Bootstrap framework and Underscore.js
 env.json.example - variables for the application
 gulpfile.js      - Gulp configuration that compiles SASS, concatenates JavaScript, etc.
-package.json     - npm configuration that loads dependencies requires by Gulp
+package.json     - npm configuration that loads Gulp, Boostrap, Underscore.js, etc.
 ```
 
 ## External Go Packages

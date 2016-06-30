@@ -53,6 +53,11 @@ url    = "configuration/"
 weight = 10
 
 [[menu.main]]
+name   = "Assets"
+url    = "assets/"
+weight = 15
+
+[[menu.main]]
 name   = "Routing"
 url    = "routing/"
 weight = 20

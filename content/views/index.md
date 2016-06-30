@@ -274,10 +274,11 @@ Here are examples of all the fields with the Bootrap structure and classes:
 ## Change HTTP Methods
 
 When you submit a form a a website, the site most likely it sends a POST
-request to the server. In order for us to make our web site more RESTful, we
+request to the server. In order for us to make our application more RESTful, we
 can use utilize the simple
 [**rest**](https://github.com/blue-jay/blueprint/blob/master/middleware/rest/rest.go)
-package to change the HTTP method the servers sees from a form field.
+package to change the HTTP method from a form field. The **rest** middleware is
+already applied to every request in the **bootstrap** package.
 
 To change the method, add this line to your form and change **value** to match
  a method like **DELETE** or **PATCH**.
@@ -307,7 +308,15 @@ PATCH HTTP method:
 </form>
 ```
 
+The routes for this page would look something like this:
 
+```go
+// Display the Update Page - typical GET HTTP method
+router.Get("/user/edit/:id", Edit, c...)
+
+// Handle the Update Page Form Submissions - PATCH HTTP method
+router.Patch("user/edit/:id", Update, c...)
+```
 
 ## Header and Footer
 
