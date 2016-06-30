@@ -7,7 +7,7 @@ weight: 50
 ## Basic Usage
 
 It's a good idea to abstract the database layer out so if you need to make 
-changes, you don't have to look through business logic to find the queries. All
+changes, you don't have to look through the controllers to find the queries. All
 the queries are stored in the **model** folder.
 
 Blue Jay supports MySQL by default, but can easily be expanded to use other
@@ -42,15 +42,15 @@ if err != nil {
 
 ### Model
 ```go
-// Create adds an item
-func Create(content string, userID string) (sql.Result, error) {
+// Create adds an item.
+func Create(name string, userID string) (sql.Result, error) {
 	result, err := database.SQL.Exec(fmt.Sprintf(`
 		INSERT INTO %v
-		(content, user_id)
+		(name, user_id)
 		VALUES
 		(?,?)
 		`, table),
-		content, userID)
+		name, userID)
 	return result, model.StandardError(err)
 }
 ```
@@ -73,11 +73,11 @@ if err != nil { // If the note doesn't exist
 
 ### Model
 ```go
-// ByID gets item by ID
+// ByID gets item by ID.
 func ByID(ID string, userID string) (Item, error) {
 	result := Item{}
 	err := database.SQL.Get(&result, fmt.Sprintf(`
-		SELECT id, content, user_id, created_at, updated_at, deleted_at
+		SELECT id, name, user_id, created_at, updated_at, deleted_at
 		FROM %v
 		WHERE id = ?
 			AND user_id = ?
@@ -106,11 +106,11 @@ if err != nil {
 
 ### Model
 ```go
-// ByUserID gets all items for a user
+// ByUserID gets all entities for a user.
 func ByUserID(userID string) ([]Item, error) {
 	var result []Item
 	err := database.SQL.Select(&result, fmt.Sprintf(`
-		SELECT id, content, user_id, created_at, updated_at, deleted_at
+		SELECT id, name, user_id, created_at, updated_at, deleted_at
 		FROM %v
 		WHERE user_id = ?
 			AND deleted_at IS NULL
@@ -138,17 +138,17 @@ if err != nil {
 
 ### Model
 ```go
-// Update makes changes to an existing item
-func Update(content string, ID string, userID string) (sql.Result, error) {
+// Update makes changes to an existing item.
+func Update(name string, ID string, userID string) (sql.Result, error) {
 	result, err := database.SQL.Exec(fmt.Sprintf(`
 		UPDATE %v
-		SET content = ?
+		SET name = ?
 		WHERE id = ?
 			AND user_id = ?
 			AND deleted_at IS NULL
 		LIMIT 1
 		`, table),
-		content, ID, userID)
+		name, ID, userID)
 	return result, model.StandardError(err)
 }
 ```
@@ -173,7 +173,7 @@ if err != nil {
 
 ### Model
 ```go
-// Delete marks an item as removed
+// Delete marks an item as removed.
 func Delete(ID string, userID string) (sql.Result, error) {
 	result, err := database.SQL.Exec(fmt.Sprintf(`
 		UPDATE %v
@@ -207,7 +207,7 @@ if err != nil {
 
 ### Model
 ```go
-// Delete removes an item
+// DeleteHard removes an item.
 func DeleteHard(ID string, userID string) (sql.Result, error) {
 	result, err := database.SQL.Exec(fmt.Sprintf(`
 		DELETE FROM %v
@@ -231,11 +231,11 @@ You can manage the errors like this:
 
 ```go
 var (
-	// ErrNoResult is when no results are found
+	// ErrNoResult is when no results are found.
 	ErrNoResult = errors.New("Result not found.")
 )
 
-// StrandardError returns a model defined error
+// StandardError returns a model defined error.
 func StandardError(err error) error {
 	if err == sql.ErrNoRows {
 		return ErrNoResult

@@ -11,22 +11,24 @@ features like request/response logging, access controls lists (ACLs), and
 header modification. Middleware is either applied to every request (for request
 logging) or specified routes (for ACLs).
 
-There are a few pieces of middleware included. The package called csrfbanana 
+There are a few pieces of middleware included. The package called **csrfbanana**
 protects against Cross-Site Request Forgery attacks and prevents double submits. 
-The package httprouterwrapper provides helper functions to make funcs compatible 
-with httprouter. The package logrequest will log every request made against the 
-website to the console. The package pprofhandler enables pprof so it will work 
-with httprouter.
+The **logrequest** package will log every request made against the 
+website to the console. The **rest** package allows the HTTP method to be
+changed during a form submission to DELETE or PATCH instead of POST.
 
 ## Creating Middleware
 
 An example of a piece of middleware that is applied to every request is
-**lib/middleware/logrequest**. When a page is requested, the middleware will
-print to the console the time of the request, remote IP address, HTTP method,
+**middleware/logrequest**. When a page is requested, the middleware will
+print to the console: the time of the request, remote IP address, HTTP method,
 and the URL requested.
 
-[Source](https://github.com/blue-jay/blueprint/blob/master/lib/middleware/logrequest/logrequest.go)
+[Source](https://github.com/blue-jay/blueprint/blob/master/middleware/logrequest/logrequest.go)
 ```go
+// Package logrequest provides an http.Handler that logs when a request is
+// made to the application and lists the remote address, the HTTP method,
+// and the URL.
 package logrequest
 
 import (
@@ -35,20 +37,19 @@ import (
 	"time"
 )
 
-// Handler will log the HTTP requests
+// Handler will log the HTTP requests.
 func Handler(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Log the request
 		fmt.Println(time.Now().Format("2006-01-02 03:04:05 PM"), r.RemoteAddr, r.Method, r.URL)
 		next.ServeHTTP(w, r)
 	})
 }
 ```
 
-You can use this template for writing your own middleware:
+This is an example of the minimum requirements for middleware:
 
 ```go
-// Handler will log the HTTP requests
+// Handler
 func Handler(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Logic BEFORE the other handlers and function goes here
@@ -60,7 +61,7 @@ func Handler(next http.Handler) http.Handler {
 
 ## Chaining
 
-Chaining prevents middleware from stacking up which is hard to read.
+Chaining prevents middleware from stacking up which is hard to read like this:
 
 ```go
 return context.ClearHandler(rest.Handler(logrequest.Handler(setUpBanana)))
@@ -80,21 +81,9 @@ the application uses the **router.ChainHandler()** function. The function is a w
 the [justinas/alice](https://github.com/justinas/alice) package which makes
 using middleware more scalable and a little "prettier". If you look at the
 [bootstrap](https://github.com/blue-jay/blueprint/blob/master/bootstrap/bootstrap.go)
-package, you'll see the **ChainHandler()** function.
-
-```go
-// Middleware contains the middleware that applies to every request
-func SetUpMiddleware(h http.Handler) http.Handler {
-	return router.ChainHandler( // Chain middleware, bottom runs first
-		context.ClearHandler, // Clear handler for Gorilla Context
-		rest.Handler,         // Support changing HTTP method sent via form input
-		logrequest.Handler,   // Log every request
-		setUpBanana)          // Prevent CSRF and double submits
-}
-```
-
-There is also a **Chain()** function that can be used to chain middleware for routes
-or to pass to **ChainHandler()**.
+package, you'll see the **ChainHandler()** function. There is also a **Chain()**
+function that can be used to chain middleware for routes or to pass to
+**ChainHandler()**.
 
 ```go
 // Apply middleware to routes individually
@@ -118,6 +107,7 @@ return router.ChainHandler(c...)
 
 **ChainHandler()** accepts one or more of the http.Handler type and returns a
 http.Handler.
+
 **Chain()** accepts one or more of the http.Handler type and returns an array of
 the alice.Constructor type.
 
@@ -130,9 +120,10 @@ request.
 
 [Source](https://github.com/blue-jay/blueprint/blob/master/bootstrap/bootstrap.go)
 ```go
-// Middleware contains the middleware that applies to every request
+// SetUpMiddleware contains the middleware that applies to every request.
 func SetUpMiddleware(h http.Handler) http.Handler {
 	return router.ChainHandler( // Chain middleware, bottom runs first
+		h,                    // Handler to wrap
 		context.ClearHandler, // Clear handler for Gorilla Context
 		rest.Handler,         // Support changing HTTP method sent via form input
 		logrequest.Handler,   // Log every request

@@ -7,8 +7,8 @@ weight: 10
 ## Basic Usage
 
 Throughout this documentation, keep in mind everything in Blueprint is configurable.
-You are not using a framework so you don't have to follow rules. You don't need to
-use any of the components with Blueprint, but it does give you a nice foundation to
+You are not using a framework so don't be afraid to change code. You don't need to
+use any of the components included with Blueprint, but it does give you a nice foundation to
 start from. If you want to use YAML instead of JSON, it's recommended to create a wrapper
 library in the **lib** folder and then load your env.yaml file via the **bootstrap**
 package.
@@ -22,58 +22,62 @@ in the **bootstrap** package. Here is an example **env.json**:
 
 ```json
 {
-	"Database": {
-		"Type": "MySQL",
-		"MySQL": {
-			"Username": "root",
-			"Password": "",
-			"Database": "blueprint",
-			"Hostname": "127.0.0.1",
-			"Port": 3306,
-			"Parameter": "?parseTime=true"
-		}
-	},
-	"Email": {
-		"Username": "",
-		"Password": "",
-		"Hostname": "",
-		"Port": 25,
-		"From": ""
-	},
-	"Server": {
-		"Hostname": "",
-		"UseHTTP": true,
-		"UseHTTPS": false,
-		"RedirectToHTTPS": false,
-		"HTTPPort": 80,
-		"HTTPSPort": 443,
-		"CertFile": "tls/server.crt",
-		"KeyFile": "tls/server.key"
-	},
-	"Session": {
-		"SecretKey": "@r4B?EThaSEh_drudR7P_hub=s#s2Pah",
-		"Name": "sess",
-		"Options": {
-			"Path": "/",
-			"Domain": "",
-			"MaxAge": 28800,
-			"Secure": false,
-			"HttpOnly": true
-		}
-	},
-	"Template": {
-		"Root": "base",
-		"Children": [
-			"partial/menu",
-			"partial/footer"
-		]
-	},
-	"View": {
-		"BaseURI": "/",
-		"Extension": "tmpl",
-		"Folder": "template",
-		"Caching": true
-	}
+  "Asset":{
+    "Folder":"asset"
+  },
+  "Database":{
+    "Type":"MySQL",
+    "MySQL":{  
+      "Username":"root",
+      "Password":"",
+      "Database":"blueprint",
+      "Hostname":"127.0.0.1",
+      "Port":3306,
+      "Parameter":"?parseTime=true"
+    }
+  },
+  "Email":{
+    "Username":"",
+    "Password":"",
+    "Hostname":"",
+    "Port":25,
+    "From":""
+  },
+  "Server":{
+    "Hostname":"",
+    "UseHTTP":true,
+    "UseHTTPS":false,
+    "RedirectToHTTPS":false,
+    "HTTPPort":80,
+    "HTTPSPort":443,
+    "CertFile":"tls/server.crt",
+    "KeyFile":"tls/server.key"
+  },
+  "Session":{
+    "SecretKey":"@r4B?EThaSEh_drudR7P_hub=s#s2Pah",
+    "Name":"sess",
+    "Options":{  
+      "Path":"/",
+      "Domain":"",
+      "MaxAge":28800,
+      "Secure":false,
+      "HttpOnly":true
+    }
+  },
+  "Template":{
+    "Root":"base",
+    "Children":[
+      "partial/favicon",
+	  "partial/menu",
+      "partial/footer"
+    ]
+  },
+  "View":{
+    "BaseURI":"/",
+    "Extension":"tmpl",
+    "Folder":"view",
+    "Caching":true
+  }
 }
 ```
 
@@ -81,20 +85,19 @@ in the **bootstrap** package. Here is an example **env.json**:
 
 The **env.json** file contains the configuration for Blueprint. It removes the need
 to hardcode any of these values and makes it easy to move Blueprint to another system
-with a different setup.
-
-The **env.json** file is parsed and the result is organized in the **Info** struct from the
-**bootstrap** package:
+with a different setup. The **env.json** file is parsed and held in the
+**Info** struct from the **bootstrap** package:
 
 ```go
-// Info contains the application settings
+// Info contains the application settings.
 type Info struct {
-	Database database.Info   `json:"Database"`
-	Email    email.SMTPInfo  `json:"Email"`
-	Server   server.Server   `json:"Server"`
-	Session  session.Session `json:"Session"`
-	Template view.Template   `json:"Template"`
-	View     view.View       `json:"View"`
+	Asset    asset.Info    `json:"Asset"`
+	Database database.Info `json:"Database"`
+	Email    email.Info    `json:"Email"`
+	Server   server.Info   `json:"Server"`
+	Session  session.Info  `json:"Session"`
+	Template view.Template `json:"Template"`
+	View     view.Info     `json:"View"`
 }
 ```
 
@@ -102,12 +105,13 @@ The **Info** struct is simply a container that nests structs from packages in th
 that need variables configured. Here is a list mapping the JSON keys to structs:
 
 ```text
+Asset       - Info struct in lib/asset
 Database	- Info struct in lib/database
-Email		- SMTPInfo struct in lib/email
-Server		- Server struct in lib/server
-Session		- Session struct in lib/session
+Email		- Info struct in lib/email
+Server		- Info struct in lib/server
+Session		- Info struct in lib/session
 Template	- Template struct in lib/view
-View		- View struct in lib/view
+View		- Info struct in lib/view
 ```
 
 ## Enable HTTPS
@@ -118,7 +122,7 @@ To enable HTTPS:
 1. Create a folder called **tls** in the project root folder 
 1. Place your own certificate and key files in the **tls** folder
 
-**Note:** If you want to redirect HTTP to HTTPS, you can set **RedirectToHTTPS** to true as well.
+**Note:** If you want to redirect HTTP to HTTPS, you can set **RedirectToHTTPS** to **true** as well.
 
 ## Tip: Add a Section
 
@@ -127,7 +131,7 @@ To add a new key called **Captcha**, you could do the following:
 1. Create a new package in the **lib** folder called **captcha**
 1. Create a struct called **Info** in the **lib/captcha** package
 1. Add the **Captcha** key and any values to the **env.json** file
-1. Add code to the **RegisterServices()** function that passes the parsed config to the **lib/captcha** package
+1. Add code to the **RegisterServices()** function in the **bootstrap** package to pass the config to the **lib/captcha** package at start up
 1. Add code to your controllers that references your **lib/captcha** package
 
 ## Tip: Remove a Section
