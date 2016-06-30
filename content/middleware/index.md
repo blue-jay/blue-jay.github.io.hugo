@@ -108,6 +108,7 @@ router.Get("/notepad/create", Create, c...)
 
 // Pass Chain() to ChainHandler()
 c := router.Chain( // Chain middleware, bottom runs first
+	h,                    // Handler to wrap
 	context.ClearHandler, // Clear handler for Gorilla Context
 	rest.Handler,         // Support changing HTTP method sent via form input
 	logrequest.Handler,   // Log every request

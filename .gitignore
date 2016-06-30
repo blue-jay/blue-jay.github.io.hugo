@@ -1,2 +1,6 @@
 # OS Files
 .DS_Store
+thumbs.db
+
+# Folders
+/public/
