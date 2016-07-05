@@ -19,7 +19,7 @@ repo_url = "https://github.com/blue-jay/blueprint"
 
 version = "0.5-bravo"
 logo = "images/bluejaylogo.png"
-favicon = ""
+favicon = "images/favicon.ico"
 
 permalink = "#"
 
