@@ -1,5 +1,4 @@
 ---
-date: 2016-06-20T21:07:13+01:00
 title: Middleware
 weight: 30
 ---
@@ -8,8 +7,8 @@ weight: 30
 
 Middleware, in the context of Go, is applied during routing to provide
 features like request/response logging, access controls lists (ACLs), and
-header modification. Middleware is either applied to every request (for request
-logging) or specified routes (for ACLs).
+header modification. Middleware is either applied to every request (like for
+request logging) or specified routes (like for ACLs).
 
 There are a few pieces of middleware included. The package called **csrfbanana**
 protects against Cross-Site Request Forgery attacks and prevents double submits. 
@@ -46,7 +45,7 @@ func Handler(next http.Handler) http.Handler {
 }
 ```
 
-This is an example of the minimum requirements for middleware:
+This is an example of the minimum code required for middleware:
 
 ```go
 // Handler
@@ -61,13 +60,15 @@ func Handler(next http.Handler) http.Handler {
 
 ## Chaining
 
-Chaining prevents middleware from stacking up which is hard to read like this:
+The more middleware you use, the more it stacks up like this and makes it hard
+to read:
 
 ```go
 return context.ClearHandler(rest.Handler(logrequest.Handler(setUpBanana)))
 ```
+
 Before [justinas/alice](https://github.com/justinas/alice), a workaround was to
-use the variable and reassign it multiple times like this:
+use a variable and reassign it multiple times like this:
 
 ```go
 h = setUpBanana(h)
@@ -76,8 +77,9 @@ h = rest.Handler(h)
 return context.ClearHandler(h)
 ```
 
-In [controller/notepad](https://github.com/blue-jay/blueprint/blob/master/controller/notepad/notepad.go),
-the application uses the **router.ChainHandler()** function. The function is a wrapper for
+You can see chaining in action in [controller/notepad](https://github.com/blue-jay/blueprint/blob/master/controller/notepad/notepad.go)
+where the controller uses the **router.ChainHandler()** function.
+The function is a wrapper for
 the [justinas/alice](https://github.com/justinas/alice) package which makes
 using middleware more scalable and a little "prettier". If you look at the
 [bootstrap](https://github.com/blue-jay/blueprint/blob/master/bootstrap/bootstrap.go)

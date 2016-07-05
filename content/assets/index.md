@@ -1,7 +1,7 @@
 ---
 date: 2016-06-30T21:07:13+01:00
 title: Assets
-weight: 10
+weight: 15
 ---
 
 ## Basic Usage
@@ -13,9 +13,9 @@ folder.
 
 The **dynamic** folder contains the Syntactically Awesome Style Sheets (SASS),
 individual JavaScript files, and a large PNG image which is used to generate
-favicons for different platforms like Android, iPhone, etc. The dynamic folder
-holds some of the assets required to generate the assets in the **static**
-folder. *This is the folder you want to make your changes.*
+favicons for different platforms like Android, iPhone, etc. *This is the folder
+in which you want to make your changes.* The dynamic folder holds some of the
+assets required to generate the assets in the **static** folder.
 
 The **static** folder contains the minified CSS and JavaScript as well as
 the generated favicons. The **static** folder is designed to be served up
@@ -51,10 +51,10 @@ Once npm is installed, you can open your terminal and CD to the root of the
 project folder. You can then run these commands:
 
 ```bash
-# Install Gulp Globally
+# Install Gulp globally
 npm install -g gulp-cli
 
-# Install Glup Locally with Dependencies from package.json
+# Install Gulp locally and dependencies from package.json
 npm install
 ```
 
@@ -102,5 +102,6 @@ gulp init
 gulp default
 ```
 
-It best to run `gulp watch` so when you are working in the SASS and JavaScript
-files, they will automatically update for you
+It is best to run `gulp watch` so when you are working with the SASS and
+JavaScript files so they will automatically generate in the **static** folder
+for you.

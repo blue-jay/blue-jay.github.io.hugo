@@ -48,6 +48,11 @@ url    = "/"
 weight = 0
 
 [[menu.main]]
+name   = "Structure"
+url    = "structure/"
+weight = 5
+
+[[menu.main]]
 name   = "Configuration"
 url    = "configuration/"
 weight = 10
@@ -81,6 +86,21 @@ weight = 50
 name   = "Views"
 url    = "views/"
 weight = 60
+
+[[menu.main]]
+name   = "Database Migration"
+url    = "database-migration/"
+weight = 70
+
+[[menu.main]]
+name   = "Find and Replace"
+url    = "find-replace/"
+weight = 80
+
+[[menu.main]]
+name   = "Code Generation"
+url    = "generation/"
+weight = 90
 
 [blackfriday]
 smartypants	= true

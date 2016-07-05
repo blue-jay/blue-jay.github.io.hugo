@@ -1,19 +1,14 @@
 ---
-date: 2016-03-08T21:07:13+01:00
 title: Toolkit Overview
 type: index
 weight: 0
 ---
-
-[![Go Report Card](https://goreportcard.com/badge/github.com/blue-jay/blueprint)](https://goreportcard.com/report/github.com/blue-jay/blueprint)
-[![GoDoc](https://godoc.org/github.com/blue-jay/blueprint?status.svg)](https://godoc.org/github.com/blue-jay/blueprint)
 
 Blue Jay is a web toolkit for [Go](https://golang.org/). It's a collection of command-line tools and a web blueprint that allows you to easily structure your web application. There is no rigid framework to which you have to conform and Blueprint is very easy to start using.
 
 There are a few components:
 
 - [**Blueprint**](https://github.com/blue-jay/blueprint) is a model-view-controller (MVC) style web skeleton.
-
 - [**Jay**](https://github.com/blue-jay/jay) is a command line tool with find/replace, database migrations, and code generation.
 
 ## High Level
@@ -40,61 +35,49 @@ generation of favicons, and copying of static assets like Bootstrap and jQuery
 managed by npm to the **asset/static** folder. They are great tools that speed up
 web development.
 
-## Quick Start with MySQL
+Jay is a command-line tool that plays nice with Blueprint. It has a find/replace
+functionality so code refactoring is a little easier. It performs database
+migration to help with moving your database between states when sharing code
+between teams. Jay provides template-based code generation that allows you to
+build controllers, models and middleware, as well as multiple views and any
+other file you would like to build. All templates (*.gen files) are parsed using
+the **text/template** package from the Go standard library and all generation
+instructions (*.json files) allow you to specify which variables to pass via
+**jay** as well as in which folder to create the templates. You can also build
+collections of templates and generate more than one file set which is great when
+you want to scaffold out a component using (create, read, update, and delete)
+CRUD.
 
-1. To download, run the following command: `go get github.com/blue-ray/blueprint`
-1. Start a MySQL instance and import **database/migration/20160630_020000_a.up.sql** to create the database and tables.
-1. Make a copy of env.json.example and name it: **env.json**
-1. Edit the **Database** section in **env.json** so the connection information matches your MySQL instance.
-1. Use `go run` from the root of the project directory.
+## Quick Start Website with Jay
+
+1. To download Blueprint, run the following command: `go get github.com/blue-ray/blueprint`
+1. To download Jay, run the following command: `go get github.com/blue-ray/jay`
+1. Open your terminal and CD to the **blueprint** folder.
+1. Run this command to create the env.json file from env.json.example: `jay env make`
+1. Set the environment variable, JAYCONFIG, to the env.json file path. For example:
+  * On Windows: `SET JAYCONFIG=C:\bluejay\workspace\src\github.com\blue-jay\blueprint\env.json`
+  * On Linux/OS X: `export JAYCONFIG=$HOME/workspace/src/github.com/blue-jay/blueprint/env.json`
+1. Start a MySQL instance.
+1. Edit the **Database** section of env.json to match your database login information.
+1. Create the database and tables using the command: `jay migrate all`
+1. Run the application using the command: `go run blueprint.go`
 1. Open your web browser to http://localhost and you should see the welcome page.
 1. Navigate to the register page at http://localhost/register and create a new user.
-1. You can now login at http://localhost/login to try the Notepad app.
+1. You can now login at http://localhost/login.
 
-## Structure
+## Quick Start Website without Jay
 
-The project is organized into the following folders:
-
-```text
-asset/
-|----dynamic/    - private assets like SASS files, single JavaScript files, and logo.png for favicon generation
-|----static/     - public assets like CSS, JavaScript, and favicon.ico for Android, Apple, etc.
-bootstrap/	     - package for initial set up of the application
-controller/	     - packages with routes and application logic
-database/
-|----migration/  - SQL files for migration database up and down
-generate/	     - template pairs (.gen and .json) for generating code using jay
-lib/             - packages with minimum dependencies
-middleware/      - packages that return a http.Handler to wrap around routes for ACL, request logging, etc.
-model/		     - packages with database queries and structs matching tables
-view/            - HTML templates parsed using the Go html/template package
-viewfunc/        - packages that return a template.FuncMap for use in views
-viewmodify/      - packages that modify view prior to rendering to add varibles like CSRF token and auth level
-```
-
-The following files exist at the project root:
-
-```text
-blueprint.go     - entrypoint for the application
-env.json.example - variables for the application
-gulpfile.js      - Gulp configuration that compiles SASS, concatenates JavaScript, etc.
-package.json     - npm configuration that loads Gulp, Boostrap, Underscore.js, etc.
-```
-
-## External Go Packages
-
-There are a few external packages that must be retrieved using `go get`:
-
-```text
-github.com/gorilla/context				- registry for global request variables
-github.com/gorilla/sessions				- cookie and filesystem sessions
-github.com/go-sql-driver/mysql 			- MySQL driver
-github.com/jmoiron/sqlx 				- MySQL general purpose extensions
-github.com/josephspurrier/csrfbanana 	- CSRF protection for gorilla sessions
-github.com/julienschmidt/httprouter 	- high performance HTTP request router
-github.com/justinas/alice				- middleware chaining
-golang.org/x/crypto/bcrypt 				- password hashing algorithm
-```
+1. To download Blueprint, run the following command: `go get github.com/blue-ray/blueprint`
+1. Start a MySQL instance.
+1. Make a copy of env.json.example and name it: **env.json**
+1. Edit the **Database** section in **env.json** so the connection information matches your MySQL instance.
+1. Create a database called **blueprint**.
+1. Import **database/migration/20160630_020000_a.up.sql** to create the tables.
+1. Open your terminal and CD to the **blueprint** folder.
+1. Run the application using the command: `go run blueprint.go`
+1. Open your web browser to http://localhost and you should see the welcome page.
+1. Navigate to the register page at http://localhost/register and create a new user.
+1. You can now login at http://localhost/login.
 
 ## Why Blue Jay?
 

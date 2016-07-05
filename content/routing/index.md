@@ -1,5 +1,4 @@
 ---
-date: 2016-03-08T21:07:13+01:00
 title: Routing
 weight: 20
 ---
@@ -14,10 +13,9 @@ The controller files are all organized under the **controller** folder.
 ## Routing
 
 In the **bootstrap** package, the **RegisterServices()** function
-calls the **controller.LoadRoutes()** function.
-
-The **LoadRoutes()** function in the **controller** package loads the routes
-for each of the individual controllers:
+calls the **controller.LoadRoutes()** function. The **LoadRoutes()** function in
+ the **controller** package loads the routes for each of the individual
+ controllers:
 
 ```go
 // LoadRoutes loads the routes for each of the controllers.

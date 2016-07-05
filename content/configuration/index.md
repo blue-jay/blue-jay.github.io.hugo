@@ -1,5 +1,4 @@
 ---
-date: 2016-03-08T21:07:13+01:00
 title: Configuration
 weight: 10
 ---
@@ -13,8 +12,29 @@ start from. If you want to use YAML instead of JSON, it's recommended to create 
 library in the **lib** folder and then load your env.yaml file via the **bootstrap**
 package.
 
+## Jay Command: env
+
 One of the first steps before using Blueprint is to create **env.json**. You can make
-a copy of **env.json.example** and then name it **env.json**. The **env.json** file is a
+a copy of **env.json.example** and then name it **env.json**, just be sure to
+generate a new **AuthKey** and **EncryptKey** in the **Session** section.
+
+You can also use **jay** to create the env.json file with new session keys.
+Just CD to the **blueprint** folder and then run: `jay env make`
+
+Here are the commands you can use with `jay env`:
+
+```bash
+# Create a new env.json file from env.json.example with newly generated session keys
+jay env make
+
+# Show a new set of session keys that can be copied and pasted into env.json
+jay env keyshow
+
+# Generate a new set of session keys and automatically apply them to env.json
+env env keyupdate
+```
+
+The **env.json** file is a
 good place to set variables for the application so you
 don't have to hardcode them. If you want to add any 
 of your own settings, you can add them to **env.json** and update the **Info** struct
@@ -31,9 +51,11 @@ in the **bootstrap** package. Here is an example **env.json**:
       "Username":"root",
       "Password":"",
       "Database":"blueprint",
+      "Charset":"utf8mb4",
+      "Collation":"utf8mb4_unicode_ci",
       "Hostname":"127.0.0.1",
       "Port":3306,
-      "Parameter":"?parseTime=true"
+      "Parameter":"parseTime=true"
     }
   },
   "Email":{
@@ -54,7 +76,8 @@ in the **bootstrap** package. Here is an example **env.json**:
     "KeyFile":"tls/server.key"
   },
   "Session":{
-    "SecretKey":"@r4B?EThaSEh_drudR7P_hub=s#s2Pah",
+    "AuthKey":"PzCh6FNAB7/jhmlUQ0+25sjJ+WgcJeKR2bAOtnh9UnfVN+WJSBvY/YC80Rs+rbMtwfmSP4FUSxKPtpYKzKFqFA==",
+    "EncryptKey":"3oTKCcKjDHMUlV+qur2Ve664SPpSuviyGQ/UqnroUD8=",
     "Name":"sess",
     "Options":{  
       "Path":"/",
@@ -68,7 +91,7 @@ in the **bootstrap** package. Here is an example **env.json**:
     "Root":"base",
     "Children":[
       "partial/favicon",
-	  "partial/menu",
+    "partial/menu",
       "partial/footer"
     ]
   },
@@ -118,15 +141,16 @@ View		- Info struct in lib/view
 
 To enable HTTPS:
 
-1. Set **UseHTTPS** to **true**
+1. Set **UseHTTPS** to **true** in the **env.json** file
 1. Create a folder called **tls** in the project root folder 
 1. Place your own certificate and key files in the **tls** folder
 
-**Note:** If you want to redirect HTTP to HTTPS, you can set **RedirectToHTTPS** to **true** as well.
+**Note:** If you want to redirect HTTP to HTTPS, you can set **RedirectToHTTPS** to **true** in the **env.json** file as well.
 
 ## Tip: Add a Section
 
-To add a new key called **Captcha**, you could do the following:
+To add a new key called **Captcha**, your workflow would consist of the
+following:
 
 1. Create a new package in the **lib** folder called **captcha**
 1. Create a struct called **Info** in the **lib/captcha** package
@@ -136,11 +160,11 @@ To add a new key called **Captcha**, you could do the following:
 
 ## Tip: Remove a Section
 
-To remove the **Email** key, you could do the following:
+To remove the **Email** key, your workflow would consist of the following:
 
 1. Remove the **Email** key and value from the **env.json** file
 1. Remove the **Email** nested struct from the **Info** struct in the **bootstrap** package
 1. Remove any code setting up the package from the **RegisterServices()** function in the **bootstrap** package
 1. Remove the **lib/email** package from the filesystem
-1. Find any references to the **lib/email** package in your code using the jay command line, `jay find "lib/email" "*.go"`,
+1. Find any references to the **lib/email** package in your code using the jay command line, `jay find . "lib/email"`,
 then delete the imports and referencing code

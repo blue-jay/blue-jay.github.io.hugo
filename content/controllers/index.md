@@ -1,5 +1,4 @@
 ---
-date: 2016-03-08T21:07:13+01:00
 title: Controllers
 weight: 40
 ---
@@ -57,9 +56,9 @@ func Index(w http.ResponseWriter, r *http.Request) {
 
 ## Access a Session
 
-Sessions provide access to variables that are set at login as well as flash
-messages. You **must** remember to save the sessions once you make a change to
-// them.
+Sessions provide access to flash messages as well as variables that are set at
+login. You **must** remember to save the sessions once you make a change to
+them.
 
 ```go
 // Get the current session
@@ -88,8 +87,8 @@ sess.Save(r, w) // Ensure you save the session after making a change to it
 
 The **form** package makes it easy to validate required fields. It works on the 
 inputs: text, textarea, checkbox, radio, and select. The function, 
-**form.Required()**, requires the request (r) and then any number of fields
-because it is a variadic function.
+**form.Required()**, requires the request and then any number of fields
+as it is a variadic function.
 
 ```go
 if valid, missingField := form.Required(r, "email", "password"); !valid {
