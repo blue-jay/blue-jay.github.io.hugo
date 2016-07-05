@@ -16,7 +16,8 @@ database you add features or fix bugs in your database. The 'down' file contains
 the code to remove the change or undo it.
 
 **Note**: The `jay migrate` commands requires the environment variable,
-JAYCONFIG, to point to the env.json file path.
+JAYCONFIG, to point to the env.json file path. The **database** folder
+containing the **migration** folder must also be in the same folder.
 
 When you start using **Blueprint** you'll see two migration files already exist
 in the **database/migration** folder:
