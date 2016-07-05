@@ -120,37 +120,41 @@ language.
 
 ## Screenshots
 
-Public Home:
+### Public Home
 
-![Image of Public Home](https://cloud.githubusercontent.com/assets/2394539/11319464/e2cd0eac-9045-11e5-9b24-5e480240cd69.jpg)
+![Image of Public Home](/images/home_anon.png)
 
-About:
+### About
 
-![Image of About](https://cloud.githubusercontent.com/assets/2394539/11319462/e2c4d2d2-9045-11e5-805f-8b40598c92c3.jpg)
+![Image of About](/images/about.png)
 
-Register:
+### Register
 
-![Image of Register](https://cloud.githubusercontent.com/assets/2394539/11319466/e2d03500-9045-11e5-9c8e-c28fe663ed0f.jpg)
+![Image of Register](/images/register.png)
 
-Login:
+### Login
 
-![Image of Login](https://cloud.githubusercontent.com/assets/2394539/11319463/e2cd1a00-9045-11e5-8b8e-68030d870cbe.jpg)
+![Image of Login](/images/login.png)
 
-Authenticated Home:
+### Authenticated Home
 
-![Image of Auth Home](https://cloud.githubusercontent.com/assets/2394539/14809208/75f340d2-0b59-11e6-8d2a-cd26ee872281.PNG)
+![Image of Auth Home](/images/home_auth.png)
 
-View Notes:
+### View All Notes
 
-![Image of Notepad View](https://cloud.githubusercontent.com/assets/2394539/14809205/75f08432-0b59-11e6-8737-84ee796bd82e.PNG)
+![Image of Notepad View](/images/notepad_index.png)
 
-Add Note:
+### Add Note
 
-![Image of Notepad Add](https://cloud.githubusercontent.com/assets/2394539/14809207/75f338f8-0b59-11e6-9719-61355957996c.PNG)
+![Image of Notepad Add](/images/notepad_create.png)
 
-Edit Note:
+### View One Note
 
-![Image of Notepad Edit](https://cloud.githubusercontent.com/assets/2394539/14809206/75f33970-0b59-11e6-8acf-b3d533477aac.PNG)
+![Image of Notepad Edit](/images/notepad_view.png)
+
+### Edit Note
+
+![Image of Notepad Edit](/images/notepad_edit.png)
 
 ## Feedback
 
