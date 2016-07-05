@@ -1,6 +1,6 @@
 ---
 title: Database Migration
-weight: 70
+weight: 80
 ---
 
 ## Basic Usage

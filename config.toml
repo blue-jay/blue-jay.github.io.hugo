@@ -17,7 +17,7 @@ copyright = "Released under the MIT license"
 provider = "GitHub"
 repo_url = "https://github.com/blue-jay/blueprint"
 
-version = "0.1-alpha"
+version = "0.5-bravo"
 logo = "images/bluejaylogo.png"
 favicon = ""
 
@@ -88,13 +88,23 @@ url    = "views/"
 weight = 60
 
 [[menu.main]]
-name   = "Database Migration"
-url    = "database-migration/"
+name   = "Library"
+url    = "library/"
+weight = 65
+
+[[menu.main]]
+name   = "Jay Overview"
+url    = "jay/"
 weight = 70
 
 [[menu.main]]
 name   = "Find and Replace"
 url    = "find-replace/"
+weight = 75
+
+[[menu.main]]
+name   = "Database Migration"
+url    = "database-migration/"
 weight = 80
 
 [[menu.main]]
