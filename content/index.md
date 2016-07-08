@@ -50,8 +50,8 @@ CRUD.
 
 ## Quick Start Website with Jay
 
-1. To download Blueprint, run the following command: `go get github.com/blue-ray/blueprint`
-1. To download Jay, run the following command: `go get github.com/blue-ray/jay`
+1. To download Blueprint, run the following command: `go get github.com/blue-jay/blueprint`
+1. To download Jay, run the following command: `go get github.com/blue-jay/jay`
 1. Open your terminal and CD to the **blueprint** folder.
 1. Run this command to create the env.json file from env.json.example: `jay env make`
 1. Set the environment variable, JAYCONFIG, to the env.json file path. For example:
@@ -67,7 +67,7 @@ CRUD.
 
 ## Quick Start Website without Jay
 
-1. To download Blueprint, run the following command: `go get github.com/blue-ray/blueprint`
+1. To download Blueprint, run the following command: `go get github.com/blue-jay/blueprint`
 1. Start a MySQL instance.
 1. Make a copy of env.json.example and name it: **env.json**
 1. Edit the **Database** section in **env.json** so the connection information matches your MySQL instance.

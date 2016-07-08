@@ -5,7 +5,7 @@ title = "Blue Jay"
 theme = "hugo-material-docs"
 metadataformat = "yaml"
 canonifyurls = true
-googleAnalytics = ""
+googleAnalytics = "UA-80295457-1"
 
 [params]
 # General information
