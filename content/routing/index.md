@@ -51,7 +51,7 @@ func Load() {
 
 There are a few things to note here. The **router** references the
 **lib/router** package which is a thread-safe wrapper for the
-[julienschmidt/httprouter](http://github.com/julienschmidt/httprouter) package.
+[husobee/vestigo](http://github.com/husobee/vestigo) package.
 The **router.Chain()** function uses the
 [justinas/alice](http://github.com/justinas/alice) package
 to help with middleware chaining.

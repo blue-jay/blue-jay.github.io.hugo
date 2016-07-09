@@ -16,7 +16,7 @@ package.
 
 One of the first steps before using Blueprint is to create **env.json**. You can make
 a copy of **env.json.example** and then name it **env.json**, just be sure to
-generate a new **AuthKey** and **EncryptKey** in the **Session** section.
+generate a new **AuthKey**, **EncryptKey**, and **CSRFKey** in the **Session** section.
 
 You can also use **jay** to create the env.json file with new session keys.
 Just CD to the **blueprint** folder and then run: `jay env make`
@@ -34,10 +34,9 @@ jay env keyshow
 env env keyupdate
 ```
 
-The **env.json** file is a
-good place to set variables for the application so you
-don't have to hardcode them. If you want to add any 
-of your own settings, you can add them to **env.json** and update the **Info** struct
+The **env.json** file is a good place to set variables for the application so
+you don't have to hardcode them. If you want to add any of your own settings,
+you can add them to **env.json** and update the **Info** struct
 in the **bootstrap** package. Here is an example **env.json**:
 
 ```json
@@ -78,6 +77,7 @@ in the **bootstrap** package. Here is an example **env.json**:
   "Session":{
     "AuthKey":"PzCh6FNAB7/jhmlUQ0+25sjJ+WgcJeKR2bAOtnh9UnfVN+WJSBvY/YC80Rs+rbMtwfmSP4FUSxKPtpYKzKFqFA==",
     "EncryptKey":"3oTKCcKjDHMUlV+qur2Ve664SPpSuviyGQ/UqnroUD8=",
+    "CSRFKey":"xULAGF5FcWvqHsXaovNFJYfgCt6pedRPROqNvsZjU18=",
     "Name":"sess",
     "Options":{  
       "Path":"/",
@@ -103,6 +103,15 @@ in the **bootstrap** package. Here is an example **env.json**:
   }
 }
 ```
+
+## Production
+
+When you move your application to production, you should make the following
+changes:
+
+- Set **Server**.**Hostname** to the server
+- Generate the tls certs and use HTTPS
+- Set **Session**.**Secure** to true
 
 ## Configuration Structure
 

@@ -42,11 +42,11 @@ There are a few external packages used in Blueprint:
 
 ```text
 github.com/gorilla/context				- registry for global request variables
+github.com/gorilla/csrf                 - CSRF protection for gorilla sessions
 github.com/gorilla/sessions				- cookie and filesystem sessions
 github.com/go-sql-driver/mysql 			- MySQL driver
+github.com/husobee/vestigo              - HTTP router with wildcards
 github.com/jmoiron/sqlx 				- MySQL general purpose extensions
-github.com/josephspurrier/csrfbanana 	- CSRF protection for gorilla sessions
-github.com/julienschmidt/httprouter 	- high performance HTTP request router
 github.com/justinas/alice				- middleware chaining
 golang.org/x/crypto/bcrypt 				- password hashing algorithm
 ```
@@ -56,7 +56,7 @@ golang.org/x/crypto/bcrypt 				- password hashing algorithm
 The project is organized into the following folders:
 
 ```text
-env/       - package that creates and updated the env.json config file
+env/       - package that creates and updates the env.json config file
 find/      - package that finds case-sensitive matched text in files
 generate/  - package that generates code from template pairs
 lib/       - packages with minimum dependencies
@@ -75,6 +75,8 @@ jay.go     - entrypoint for the application
 There are a few external packages used in Jay:
 
 ```text
-gopkg.in/alecthomas/kingpin.v2    - command-line and flag parser
 github.com/gorilla/securecookie   - generate random keys for authentication and encryption
+github.com/go-sql-driver/mysql 	  - MySQL driver
+github.com/jmoiron/sqlx 		  - MySQL general purpose extensions
+gopkg.in/alecthomas/kingpin.v2    - command-line and flag parser
 ```
