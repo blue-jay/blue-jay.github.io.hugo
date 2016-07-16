@@ -110,7 +110,8 @@ When you move your application to production, you should make the following
 changes:
 
 - Set **Server**.**Hostname** to the server
-- Generate the tls certs and use HTTPS
+- Set **Server**.**UseHTTPS** to true
+- Generate a certificate and key for HTTPS and place in the **tls** folder
 - Set **Session**.**Secure** to true
 
 ## Configuration Structure
@@ -137,13 +138,13 @@ The **Info** struct is simply a container that nests structs from packages in th
 that need variables configured. Here is a list mapping the JSON keys to structs:
 
 ```text
-Asset       - Info struct in lib/asset
-Database	- Info struct in lib/database
-Email		- Info struct in lib/email
-Server		- Info struct in lib/server
-Session		- Info struct in lib/session
-Template	- Template struct in lib/view
-View		- Info struct in lib/view
+Asset     - Info struct in lib/asset
+Database  - Info struct in lib/database
+Email     - Info struct in lib/email
+Server    - Info struct in lib/server
+Session   - Info struct in lib/session
+Template  - Template struct in lib/view
+View      - Info struct in lib/view
 ```
 
 ## Enable HTTPS

@@ -52,7 +52,7 @@ CRUD.
 
 1. To download Blueprint, run the following command: `go get github.com/blue-jay/blueprint`
 1. To download Jay, run the following command: `go get github.com/blue-jay/jay`
-1. Open your terminal and CD to the **blueprint** folder.
+1. In your terminal, CD to the **blueprint** folder.
 1. Run this command to create the env.json file from env.json.example: `jay env make`
 1. Set the environment variable, JAYCONFIG, to the env.json file path. For example:
   * On Windows: `SET JAYCONFIG=C:\bluejay\workspace\src\github.com\blue-jay\blueprint\env.json`
@@ -60,7 +60,7 @@ CRUD.
 1. Start a MySQL instance.
 1. Edit the **Database** section of env.json to match your database login information.
 1. Create the database and tables using the command: `jay migrate all`
-1. Run the application using the command: `go run blueprint.go`
+1. Run the application: `go run blueprint.go`
 1. Open your web browser to http://localhost and you should see the welcome page.
 1. Navigate to the register page at http://localhost/register and create a new user.
 1. You can now login at http://localhost/login.
@@ -71,9 +71,13 @@ CRUD.
 1. Start a MySQL instance.
 1. Make a copy of env.json.example and name it: **env.json**
 1. Edit the **Database** section in **env.json** so the connection information matches your MySQL instance.
-1. Create a database called **blueprint**.
-1. Import **database/migration/20160630_020000_a.up.sql** to create the tables.
-1. Open your terminal and CD to the **blueprint** folder.
+1. In the **Session** section, you should generate new passwords for the following keys:
+  * AuthKey should be a 64 byte password and then base64 encoded
+  * EncryptKey should be a 32 byte password and then base64 encoded
+  * CSRFKey should be a 32 byte password and then base64 encoded
+1. Create a database called **blueprint** in MySQL.
+1. Import **database/migration/20160630_020000.000000_init.up.sql** to create the tables.
+1. In your terminal, CD to the **blueprint** folder.
 1. Run the application using the command: `go run blueprint.go`
 1. Open your web browser to http://localhost and you should see the welcome page.
 1. Navigate to the register page at http://localhost/register and create a new user.
