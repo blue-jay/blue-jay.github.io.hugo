@@ -75,7 +75,6 @@ jay.go     - entrypoint for the application
 There are a few external packages used in Jay:
 
 ```text
-github.com/gorilla/securecookie   - generate random keys for authentication and encryption
 github.com/go-sql-driver/mysql 	  - MySQL driver
 github.com/jmoiron/sqlx 		  - MySQL general purpose extensions
 gopkg.in/alecthomas/kingpin.v2    - command-line and flag parser

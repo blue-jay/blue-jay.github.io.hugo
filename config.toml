@@ -1,6 +1,7 @@
 baseurl = "http://blue-jay.github.io/"
 languageCode = "en-us"
 title = "Blue Jay"
+publishdir = "../blue-jay.github.io"
 
 theme = "hugo-material-docs"
 metadataformat = "yaml"
