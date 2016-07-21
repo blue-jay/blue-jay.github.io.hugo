@@ -10,8 +10,8 @@ features like request/response logging, access controls lists (ACLs), and
 header modification. Middleware is either applied to every request (like for
 request logging) or specified routes (like for ACLs).
 
-There are a few pieces of middleware included. The package called **csrfbanana**
-protects against Cross-Site Request Forgery attacks and prevents double submits. 
+There are a few pieces of middleware included. The package called **csrf**
+protects against Cross-Site Request Forgery attacks. 
 The **logrequest** package will log every request made against the 
 website to the console. The **rest** package allows the HTTP method to be
 changed during a form submission to DELETE or PATCH instead of POST.
@@ -64,14 +64,14 @@ The more middleware you use, the more it stacks up like this and makes it hard
 to read:
 
 ```go
-return context.ClearHandler(rest.Handler(logrequest.Handler(setUpBanana)))
+return context.ClearHandler(rest.Handler(logrequest.Handler(setUpCSRF)))
 ```
 
 Before [justinas/alice](https://github.com/justinas/alice), a workaround was to
 use a variable and reassign it multiple times like this:
 
 ```go
-h = setUpBanana(h)
+h = setUpCSRF(h)
 h = logrequest.Handler(h)
 h = rest.Handler(h)
 return context.ClearHandler(h)
@@ -100,10 +100,11 @@ router.Get("/notepad/create", Create, c...)
 // Pass Chain() to ChainHandler()
 c := router.Chain( // Chain middleware, bottom runs first
 	h,                    // Handler to wrap
-	context.ClearHandler, // Clear handler for Gorilla Context
-	rest.Handler,         // Support changing HTTP method sent via form input
+	setUpCSRF,            // Prevent CSRF
+	rest.Handler,         // Support changing HTTP method sent via query string
 	logrequest.Handler,   // Log every request
-	setUpBanana)          // Prevent CSRF and double submits
+	context.ClearHandler, // Prevent memory leak with gorilla.sessions
+)
 return router.ChainHandler(c...)
 ```
 
@@ -124,13 +125,13 @@ request.
 ```go
 // SetUpMiddleware contains the middleware that applies to every request.
 func SetUpMiddleware(h http.Handler) http.Handler {
-	return router.ChainHandler( // Chain middleware, bottom runs first
+	return router.ChainHandler( // Chain middleware, top middlware runs first
 		h,                    // Handler to wrap
-		context.ClearHandler, // Clear handler for Gorilla Context
-		rest.Handler,         // Support changing HTTP method sent via form input
+		setUpCSRF,            // Prevent CSRF
+		rest.Handler,         // Support changing HTTP method sent via query string
 		logrequest.Handler,   // Log every request
-		setUpBanana)          // Prevent CSRF and double submits
-}
+		context.ClearHandler, // Prevent memory leak with gorilla.sessions
+	)
 ```
 
 ## Apply to Specific Routes

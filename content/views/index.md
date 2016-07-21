@@ -277,20 +277,28 @@ When you submit a form a a website, the site most likely it sends a POST
 request to the server. In order for us to make our application more RESTful, we
 can use utilize the simple
 [**rest**](https://github.com/blue-jay/blueprint/blob/master/middleware/rest/rest.go)
-package to change the HTTP method from a form field. The **rest** middleware is
+package to change the HTTP method from a URL query string. The **rest** middleware is
 already applied to every request in the **bootstrap** package.
 
-To change the method, add this line to your form and change **value** to match
- a method like **DELETE** or **PATCH**.
+To change the method, add this line to your form action and change the value
+**value** to match a method like **DELETE** or **PATCH**. It will automatically
+be converted to uppercase.
+
+The query string key should be: **_method**.
+
 ```html
-<input type="hidden" name="_method" value="POST">
+<!-- Example of a PATCH request -->
+<form method="post" action="{{$.CurrentURI}}?_method=patch">
+
+<!-- Example of a DELETE request -->
+<form class="button-form" method="post" action="{{$.GrandparentURI}}/{{.item.ID}}?_method=delete">
 ```
 
 This is an example of a form that is updating and email and a password using the
 PATCH HTTP method:
 
 ```html
-<form method="post">
+<form method="post" action="{{$.CurrentURI}}?_method=patch">
 	<div class="form-group">
 		<label for="email">Email Address</label>
 		<div><input {{TEXT "email" .}} type="email" class="form-control" id="email" /></div>
@@ -304,7 +312,6 @@ PATCH HTTP method:
 	<input type="submit" class="btn btn-primary" value="Change" class="button" />
 	
 	<input type="hidden" name="_token" value="{{$.token}}">
-	<input type="hidden" name="_method" value="PATCH">
 </form>
 ```
 
