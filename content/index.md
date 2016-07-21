@@ -65,6 +65,13 @@ CRUD.
 1. Navigate to the register page at http://localhost/register and create a new user.
 1. You can now login at http://localhost/login.
 
+### OS Specific Instructions
+
+There are also more detailed guides available by operating system:
+
+- [Setup for Windows](https://github.com/blue-jay/blueprint/wiki/Blueprint-Setup-for-Windows)
+- [Setup for OS X](https://github.com/blue-jay/blueprint/wiki/Blueprint-Setup-for-OS-X)
+
 ## Quick Start Website without Jay
 
 1. To download Blueprint, run the following command: `go get github.com/blue-jay/blueprint`
