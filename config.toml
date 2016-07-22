@@ -18,7 +18,7 @@ copyright = "Released under the MIT license"
 provider = "GitHub"
 repo_url = "https://github.com/blue-jay/blueprint"
 
-version = "0.5-bravo"
+version = "0.6-charlie"
 logo = "images/bluejaylogo.png"
 favicon = "images/favicon.ico"
 
