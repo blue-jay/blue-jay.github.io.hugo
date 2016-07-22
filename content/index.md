@@ -69,8 +69,10 @@ CRUD.
 
 There are also more detailed guides available by operating system:
 
-- [Setup for Windows](https://github.com/blue-jay/blueprint/wiki/Blueprint-Setup-for-Windows)
+- [Setup for Amazon AMI](https://github.com/blue-jay/blueprint/wiki/Blueprint-Setup-for-Amazon-AMI)
+- [Setup for Ubuntu AMI](https://github.com/blue-jay/blueprint/wiki/Blueprint-Setup-for-Ubuntu-AMI)
 - [Setup for OS X](https://github.com/blue-jay/blueprint/wiki/Blueprint-Setup-for-OS-X)
+- [Setup for Windows](https://github.com/blue-jay/blueprint/wiki/Blueprint-Setup-for-Windows)
 
 ## Quick Start Website without Jay
 
