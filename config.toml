@@ -1,6 +1,6 @@
 baseurl = "http://blue-jay.github.io/"
 languageCode = "en-us"
-title = "Blue Jay"
+title = "Blue Jay | Go Toolkit for the Web"
 publishdir = "../blue-jay.github.io"
 
 theme = "hugo-material-docs"
@@ -18,6 +18,7 @@ copyright = "Released under the MIT license"
 provider = "GitHub"
 repo_url = "https://github.com/blue-jay/blueprint"
 
+short_title = "Blue Jay"
 version = "0.6-charlie"
 logo = "images/bluejaylogo.png"
 favicon = "images/favicon.ico"
