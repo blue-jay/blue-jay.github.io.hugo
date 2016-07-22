@@ -4,7 +4,7 @@ type: index
 weight: 0
 ---
 
-Blue Jay is a web toolkit for [Go](https://golang.org/). It's a collection of command-line tools and a web blueprint that allows you to easily structure your web application. There is no rigid framework to which you have to conform and Blueprint is very easy to start using.
+Blue Jay is a web toolkit for [Go](https://golang.org/). It's a collection of command-line tools and a web blueprint that allows you to easily structure your web application. There is no rigid framework to which you have to conform and the tools are easy to start using.
 
 There are a few components:
 
@@ -13,20 +13,21 @@ There are a few components:
 
 ## High Level
 
-Blueprint is a complete web application with a built-in web server.
-It supports MySQL so you'll need to set up your own instance of the database.
-The application has a public home page, authenticated home page, login page, register page,
-about page, and a simple notepad to demonstrate GET, POST, UPDATE, and DELETE operations.
+Blueprint is a web application with a built-in web server and MySQL integration.
+The application has a public home page, authenticated home page, login page,
+register page, about page, and a simple notepad to demonstrate GET, POST,
+UPDATE, and DELETE operations.
 
-The entrypoint for the web app is **blueprint.go**. The file uses the **bootstrap** package
-to load the application settings, create the session store, connect to the database,
-set up the view, load the routes, attach the middleware, and then start the web server.
+The entrypoint for the web app is **blueprint.go** which uses the **bootstrap**
+package to load the application settings, create the session store, connect to
+the database, set up the views, load the routes, attach the middleware, and then
+start the web server.
 
-The front end is built using Bootstrap with a few small changes to fonts and spacing. The flash 
-messages are customized so they show up at the bottom right of the screen. All of the error and
-warning messages should display to the 
-user or in the console. Informational messages are displayed to the user via 
-flash messages that disappear after 4 seconds.
+The front end is built using Bootstrap with a few small changes to fonts and
+spacing. The flash messages are customized so they show up at the bottom right
+corner of the screen. All of the error and warning messages should display to
+the user or in the console. Informational messages are displayed to the user
+via flash messages that disappear after 4 seconds.
 
 Blueprint also works well with [npm](https://www.npmjs.com/) and
 [Gulp](http://gulpjs.com/). A Gulp script is
@@ -35,18 +36,17 @@ generation of favicons, and copying of static assets like Bootstrap and jQuery
 managed by npm to the **asset/static** folder. They are great tools that speed up
 web development.
 
-Jay is a command-line tool that plays nice with Blueprint. It has a find/replace
-functionality so code refactoring is a little easier. It performs database
-migration to help with moving your database between states when sharing code
+Jay is a command-line tool that pairs nicely with Blueprint. It has find/replace
+functionality to make code refactoring is a little easier. It performs database
+migration to easily update your database when sharing code
 between teams. Jay provides template-based code generation that allows you to
-build controllers, models and middleware, as well as multiple views and any
-other file you would like to build. All templates (*.gen files) are parsed using
+build files like controllers, models, middleware, or even multiple views. 
+All templates (*.gen files) are parsed using
 the **text/template** package from the Go standard library and all generation
 instructions (*.json files) allow you to specify which variables to pass via
 **jay** as well as in which folder to create the templates. You can also build
-collections of templates and generate more than one file set which is great when
-you want to scaffold out a component using (create, read, update, and delete)
-CRUD.
+collections of templates to generate more than one file set which is great when
+you want to scaffold out a component with CRUD (create, read, update, and delete).
 
 ## Quick Start Website with Jay
 
