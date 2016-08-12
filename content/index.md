@@ -16,14 +16,15 @@ There are a few components:
 Blueprint is a web application with a built-in web server and MySQL integration.
 The application has a public home page, authenticated home page, login page,
 register page, about page, and a simple notepad to demonstrate GET, POST,
-UPDATE, and DELETE operations.
+PATCH, and DELETE operations.
 
 The entrypoint for the web app is **blueprint.go** which uses the **bootstrap**
 package to load the application settings, create the session store, connect to
 the database, set up the views, load the routes, attach the middleware, and then
 start the web server.
 
-The front end is built using Bootstrap with a few small changes to fonts and
+The front end is built using [Bootstrap](http://getbootstrap.com/) with a few
+small changes to fonts and
 spacing. The flash messages are customized so they show up at the bottom right
 corner of the screen. All of the error and warning messages should display to
 the user or in the console. Informational messages are displayed to the user
@@ -33,8 +34,7 @@ Blueprint also works well with [npm](https://www.npmjs.com/) and
 [Gulp](http://gulpjs.com/). A Gulp script is
 included that automates the compiling of SASS, concatenation of JavaScript,
 generation of favicons, and copying of static assets like Bootstrap and jQuery
-managed by npm to the **asset/static** folder. They are great tools that speed up
-web development.
+(which are managed by npm) to the **asset/static** folder.
 
 Jay is a command-line tool that pairs nicely with Blueprint. It has find/replace
 functionality to make code refactoring is a little easier. It performs database
