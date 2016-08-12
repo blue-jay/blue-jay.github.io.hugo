@@ -9,11 +9,14 @@ DEL /a:-h /f /s "../blue-jay.github.io/*"
 
 ECHO Deleting old folders (except .git)...
 FOR /d %%x IN (../blue-jay.github.io/*) DO (
-@RD /s /q "../blue-jay.github.io/%%x"
+RD /s /q "../blue-jay.github.io/%%x"
 )
 
 ECHO Generating content from hugo...
 hugo
+
+ECHO Removing extra files...
+RD /s /q "../blue-jay.github.io/.github"
 
 ECHO Content generated and ready to be pushed to GitHub.
 
