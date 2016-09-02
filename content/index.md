@@ -10,6 +10,7 @@ There are a few components:
 
 - [**Blueprint**](https://github.com/blue-jay/blueprint) is a model-view-controller (MVC) style web skeleton.
 - [**Jay**](https://github.com/blue-jay/jay) is a command line tool with find/replace, database migrations, and code generation.
+- [**Core**](https://github.com/blue-jay/core) is a collection of packages used by Blueprint and Jay.
 
 ## High Level
 
@@ -59,7 +60,7 @@ you want to scaffold out a component with CRUD (create, read, update, and delete
   * On Linux/OS X: `export JAYCONFIG=$HOME/workspace/src/github.com/blue-jay/blueprint/env.json`
 1. Start a MySQL instance.
 1. Edit the **Database** section of env.json to match your database login information.
-1. Create the database and tables using the command: `jay migrate all`
+1. Create the database and tables using the command: `jay migrate:mysql all`
 1. Run the application: `go run blueprint.go`
 1. Open your web browser to http://localhost and you should see the welcome page.
 1. Navigate to the register page at http://localhost/register and create a new user.
@@ -85,7 +86,7 @@ There are also more detailed guides available by operating system:
   * EncryptKey should be a 32 byte password and then base64 encoded
   * CSRFKey should be a 32 byte password and then base64 encoded
 1. Create a database called **blueprint** in MySQL.
-1. Import **database/migration/20160630_020000.000000_init.up.sql** to create the tables.
+1. Import **database/mysql/20160630_020000.000000_init.up.sql** to create the tables.
 1. In your terminal, CD to the **blueprint** folder.
 1. Run the application using the command: `go run blueprint.go`
 1. Open your web browser to http://localhost and you should see the welcome page.

@@ -31,27 +31,27 @@ The available commands are:
 - `jay find` for locating text inside files in subfolders
 - `jay replace` for replacing text inside files in subfolder
 - `jay generate` for creating code based on templates using the **text/template** package
-- `jay migrate` for managing the database state
+- `jay migrate:mysql` for managing the MySQL database state
 
 The available subcommands are:
 
 - `jay env make` for creating env.json from env.json.example
 - `jay env keyshow` for showing newly generated session keys
 - `jay env updateshow` for updating env.json with newly generation session keys
-- `jay migrate make` for creating a new migration 'up' file and 'down' file
-- `jay migrate all` for applying all 'up' migrations
-- `jay migrate reset` for applying all 'down' migrations
-- `jay migrate refresh` for applying all 'down' then 'up' migrations
-- `jay migrate status` for displaying the current database state
-- `jay migrate up` for applying only one 'up' migration
-- `jay migrate down` for applying one one 'down' migration
+- `jay migrate:mysql make` for creating a new migration 'up' file and 'down' file
+- `jay migrate:mysql all` for applying all 'up' migrations
+- `jay migrate:mysql reset` for applying all 'down' migrations
+- `jay migrate:mysql refresh` for applying all 'down' then 'up' migrations
+- `jay migrate:mysql status` for displaying the current database state
+- `jay migrate:mysql up` for applying only one 'up' migration
+- `jay migrate:mysql down` for applying one one 'down' migration
 
 There is also a common syntax used by each of the commands, subcommands, and
 arguments that make the help documents easy to follow.
 
 - Flags have one or two dashes in the front: `-h, --help`
-- Commands follow the application name (jay): `jay migrate`
-- Subcommands follow the command: `jay migrate make`
-- Arguments follow the command or subcommand: `jay migrate make <description>`
+- Commands follow the application name (jay): `jay migrate:mysql`
+- Subcommands follow the command: `jay migrate:mysql make`
+- Arguments follow the command or subcommand: `jay migrate:mysql make <description>`
 - Required arguments: `<required>`
 - Optional arguments: `[<optional>]`
