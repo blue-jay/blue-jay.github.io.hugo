@@ -6,7 +6,7 @@ weight: 60
 
 ## Basic Usage
 
-Views contain the HTML served by your application and separate your controller / application logic from your presentation logic. The views are parsed by the [html/template](https://golang.org/pkg/html/template/) package.
+Views contain the HTML served by your application and separate your controller/application logic from your presentation logic. The views are parsed by the [html/template](https://golang.org/pkg/html/template/) package.
 
 A view should include the four **define** blocks (**title**, **head**, **content**, and **foot**) and may look like this:
 
@@ -59,14 +59,15 @@ view.New("about/about").Base("alternate").Render(w, r)
 
 ## View Package
 
-The optional **lib/view** package is a wrapper for the Go [html/template](https://golang.org/pkg/html/template/) package
-and provides the following:
+The **core/view** package is a wrapper for the Go
+[html/template](https://golang.org/pkg/html/template/) package and provides the
+following:
 
 * thread-safe template caching
 * ability to extend the list of functions available in templates
 * ability to modify the variables available in templates
 
-The set up of the **view** package is handled by the **bootstrap** package:
+The set up of the **view** package is handled by the **boot** package:
 
 ```go
 // Set up the views
@@ -110,6 +111,61 @@ register/index.tmpl	 - register page
 base.tmpl            - base template for all pages
 ```
 
+## View Functions
+
+The Go template packages supports passing in a FuncMap which maps names to a
+function. This means you can add functions so they are available to the views.
+These functions are stored in the **viewfunc** folder. Here is an example of a
+LINK function that can be used to create hyperlinks and the code is stored in
+**viewfunc/link/link.go**:
+
+```go
+// Package link provides a funcmap for html/template to generate a hyperlink.
+package link
+
+import (
+	"fmt"
+	"html/template"
+)
+
+// Map returns a template.FuncMap for LINK that returns a hyperlink tag.
+func Map(baseURI string) template.FuncMap {
+	f := make(template.FuncMap)
+
+	f["LINK"] = func(path, name string) template.HTML {
+		return template.HTML(fmt.Sprintf(`<a href="%v%v">%v</a>`, baseURI, path, name))
+	}
+
+	return f
+}
+```
+
+To use this function in a template, you would write it like this:
+
+```html
+{{LINK "register" "Create a new account."}}
+```
+
+And the code would render like this:
+
+```html
+<a href="/register">Create a new account.</a>
+```
+
+Once you create a new funcmap, you make it available to the views by adding it
+to the **view.SetFuncMaps()** function in the **boot/boot.go** file:
+
+```go
+// Set up the functions for the views
+view.SetFuncMaps(
+	asset.Map(config.View.BaseURI),
+	link.Map(config.View.BaseURI),
+	noescape.Map(),
+	prettytime.Map(),
+	form.Map(),
+)
+```
+
 ## Included Functions
 
 There are a few functions that are included to make working with the templates 
@@ -136,13 +192,75 @@ and static files easier:
 
 <!-- Time format -->
 {{.SomeTime | PRETTYTIME}}
-<!-- parses to format
+<!-- parses to format -->
 3:04 PM 01/02/2006
+```
+
+## View Variables
+
+There is an easy way to add variables so they are available in the views. The
+**viewmodify** folder contains packages that define variables and add them to
+the view.Vars map. Since you are editing the map right before it renders, it
+will overwrite any other variables that were set in the controllers so it's best
+to choose names or pick a naming convention for your variables.
+
+You can also modify the view.Info struct before it renders
+if you need to display a different view or use a different base template.
+
+In the **viewmodify/authlevel/authlevel.go** file, the **AuthLevel** variable is
+made available so the views can determine if the user is authenticated or not:
+
+```go
+// Package authlevel adds an AuthLevel variable to the view template.
+package authlevel
+
+import (
+	"net/http"
+
+	"github.com/blue-jay/core/session"
+	"github.com/blue-jay/core/view"
+)
+
+// Modify sets AuthLevel in the template to auth if the user is authenticated.
+// Sets AuthLevel to anon if not authenticated.
+func Modify(w http.ResponseWriter, r *http.Request, v *view.Info) {
+	sess := session.Instance(r)
+
+	// Set the AuthLevel to auth if the user is logged in
+	if sess.Values["id"] != nil {
+		v.Vars["AuthLevel"] = "auth"
+	} else {
+		v.Vars["AuthLevel"] = "anon"
+	}
+}
+```
+
+To use the variable, you could write this type of logic into your view:
+
+```html
+{{if eq .AuthLevel "auth"}}
+You are logged in.
+{{else}}
+You are not logged in.
+{{end}}
+```
+
+Once you create a new package, you make it available to the views by adding it
+to the **view.SetModifiers()** function in the **boot/boot.go** file:
+
+```go
+// Set up the variables and modifiers for the views
+view.SetModifiers(
+	authlevel.Modify,
+	uri.Modify,
+	xsrf.Token,
+	flash.Modify,
+)
 ```
 
 ## Included Variables
 
-There are a few variables you can use in templates as well:
+There are a few included variables you can use in templates:
 
 ```html
 <!-- Use AuthLevel=auth to determine if a user is logged in (if session.Values["id"] != nil) -->
@@ -181,7 +299,7 @@ attributes are missing like **name**, **value**, and **type** from the elements.
 The blocks will automatically fill these in for you so you don't have the write
 the name of the element multiple times. By the way, it took very little code to
 add this functionality so check out the
-[form](https://github.com/blue-jay/blueprint/blob/master/lib/form/form.go)
+[form](https://github.com/blue-jay/core/blob/master/form/form.go)
 package to see how it was accomplished.
 
 ```html
@@ -278,7 +396,7 @@ request to the server. In order for us to make our application more RESTful, we
 can use utilize the simple
 [**rest**](https://github.com/blue-jay/blueprint/blob/master/middleware/rest/rest.go)
 package to change the HTTP method from a URL query string. The **rest** middleware is
-already applied to every request in the **bootstrap** package.
+already applied to every request in the **boot** package.
 
 To change the method, add this line to your form action and change the value
 **value** to match a method like **DELETE** or **PATCH**. It will automatically

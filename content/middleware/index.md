@@ -82,7 +82,7 @@ where the controller uses the **router.ChainHandler()** function.
 The function is a wrapper for
 the [justinas/alice](https://github.com/justinas/alice) package which makes
 using middleware more scalable and a little "prettier". If you look at the
-[bootstrap](https://github.com/blue-jay/blueprint/blob/master/bootstrap/bootstrap.go)
+[boot](https://github.com/blue-jay/blueprint/blob/master/boot/boot.go)
 package, you'll see the **ChainHandler()** function. There is also a **Chain()**
 function that can be used to chain middleware for routes or to pass to
 **ChainHandler()**.
@@ -117,11 +117,11 @@ the alice.Constructor type.
 ## Apply to Every Request
 
 In [blueprint.go](https://github.com/blue-jay/blueprint/blob/master/blueprint.go),
-the application calls **bootstrap.SetUpMiddleware(router.Instance())** which
+the application calls **boot.SetUpMiddleware(router.Instance())** which
 applies the middleware to the router. The middleware is called on every
 request.
 
-[Source](https://github.com/blue-jay/blueprint/blob/master/bootstrap/bootstrap.go)
+[Source](https://github.com/blue-jay/blueprint/blob/master/boot/boot.go)
 ```go
 // SetUpMiddleware contains the middleware that applies to every request.
 func SetUpMiddleware(h http.Handler) http.Handler {

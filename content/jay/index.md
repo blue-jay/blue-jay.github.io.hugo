@@ -11,7 +11,7 @@ quite a few times now so it's a good time to talk a little about the tool.
 **Jay** uses the brilliant
 [github.com/alecthomas/kingpin](github.com/alecthomas/kingpin) package to manage
 the help documents, commands, subcommands, and arguments. It takes care of
-groundwork so we can focus on the actual tasks.
+groundwork so it can focus on the actual tasks.
 
 If you ever want to see the help documents for a command or subcommand, add
 `-h` or `--help` to the end and the help documentation should be able to assist.

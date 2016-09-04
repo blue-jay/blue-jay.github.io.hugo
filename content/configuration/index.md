@@ -9,7 +9,7 @@ Throughout this documentation, keep in mind everything in Blueprint is configura
 You are not using a framework so don't be afraid to change code. You don't need to
 use any of the components included with Blueprint, but it does give you a nice foundation to
 start from. If you want to use YAML instead of JSON, it's recommended to create a wrapper
-library in the **lib** folder and then load your env.yaml file via the **bootstrap**
+library in the **lib** folder and then load your env.yaml file via the **boot**
 package.
 
 ## Jay Command: env
@@ -44,25 +44,30 @@ in the **bootstrap** package. Here is an example **env.json**:
   "Asset":{
     "Folder":"asset"
   },
-  "Database":{
-    "Type":"MySQL",
-    "MySQL":{  
-      "Username":"root",
-      "Password":"",
-      "Database":"blueprint",
-      "Charset":"utf8mb4",
-      "Collation":"utf8mb4_unicode_ci",
-      "Hostname":"127.0.0.1",
-      "Port":3306,
-      "Parameter":"parseTime=true"
-    }
-  },
   "Email":{
     "Username":"",
     "Password":"",
     "Hostname":"",
     "Port":25,
     "From":""
+  },
+  "Form":{
+    "FileStorageFolder":"filestorage"
+  },
+  "Generation":{
+    "TemplateFolder":"generate"
+  },
+  "MySQL":{  
+    "Username":"root",
+    "Password":"",
+    "Database":"blueprint",
+    "Charset":"utf8mb4",
+    "Collation":"utf8mb4_unicode_ci",
+    "Hostname":"127.0.0.1",
+    "Port":3306,
+    "Parameter":"parseTime=true",
+    "MigrationFolder":"migration/mysql",
+    "Extension":"sql"
   },
   "Server":{
     "Hostname":"",
@@ -77,7 +82,7 @@ in the **bootstrap** package. Here is an example **env.json**:
   "Session":{
     "AuthKey":"PzCh6FNAB7/jhmlUQ0+25sjJ+WgcJeKR2bAOtnh9UnfVN+WJSBvY/YC80Rs+rbMtwfmSP4FUSxKPtpYKzKFqFA==",
     "EncryptKey":"3oTKCcKjDHMUlV+qur2Ve664SPpSuviyGQ/UqnroUD8=",
-    "CSRFKey":"xULAGF5FcWvqHsXaovNFJYfgCt6pedRPROqNvsZjU18=",
+  "CSRFKey":"xULAGF5FcWvqHsXaovNFJYfgCt6pedRPROqNvsZjU18=",
     "Name":"sess",
     "Options":{  
       "Path":"/",
@@ -116,35 +121,42 @@ changes:
 
 ## Configuration Structure
 
-The **env.json** file contains the configuration for Blueprint. It removes the need
+The **env.json** file contains the configuration for Blueprint and Jay. It removes the need
 to hardcode any of these values and makes it easy to move Blueprint to another system
 with a different setup. The **env.json** file is parsed and held in the
-**Info** struct from the **bootstrap** package:
+**Info** struct from the **boot** package:
 
 ```go
 // Info contains the application settings.
 type Info struct {
-	Asset    asset.Info    `json:"Asset"`
-	Database database.Info `json:"Database"`
-	Email    email.Info    `json:"Email"`
-	Server   server.Info   `json:"Server"`
-	Session  session.Info  `json:"Session"`
-	Template view.Template `json:"Template"`
-	View     view.Info     `json:"View"`
+  Asset      asset.Info    `json:"Asset"`
+  Email      email.Info    `json:"Email"`
+  Form       form.Info     `json:"Form"`
+  Generation generate.Info `json:"Generation"`
+  MySQL      mysql.Info    `json:"MySQL"`
+  Server     server.Info   `json:"Server"`
+  Session    session.Info  `json:"Session"`
+  Template   view.Template `json:"Template"`
+  View       view.Info     `json:"View"`
+  Path       string
 }
 ```
 
-The **Info** struct is simply a container that nests structs from packages in the **lib** folder
-that need variables configured. Here is a list mapping the JSON keys to structs:
+The **Info** struct is simply a container that nests structs from packages in
+the **Core** library that need variables configured. The **Path** variable is
+the location of the env.json file. Here is a list mapping the JSON keys to
+structs:
 
 ```text
-Asset     - Info struct in lib/asset
-Database  - Info struct in lib/database
-Email     - Info struct in lib/email
-Server    - Info struct in lib/server
-Session   - Info struct in lib/session
+Asset     - Info struct in core/asset
+Email     - Info struct in core/email
+Form      - Info struct in core/form
+Generate  - Info struct in core/generate
+MySQL     - Info struct in core/mysql
+Server    - Info struct in core/server
+Session   - Info struct in core/session
 Template  - Template struct in lib/view
-View      - Info struct in lib/view
+View      - Info struct in core/view
 ```
 
 ## Enable HTTPS
@@ -165,7 +177,7 @@ following:
 1. Create a new package in the **lib** folder called **captcha**
 1. Create a struct called **Info** in the **lib/captcha** package
 1. Add the **Captcha** key and any values to the **env.json** file
-1. Add code to the **RegisterServices()** function in the **bootstrap** package to pass the config to the **lib/captcha** package at start up
+1. Add code to the **RegisterServices()** function in the **boot** package to pass the config to the **lib/captcha** package at start up
 1. Add code to your controllers that references your **lib/captcha** package
 
 ## Tip: Remove a Section
@@ -173,8 +185,8 @@ following:
 To remove the **Email** key, your workflow would consist of the following:
 
 1. Remove the **Email** key and value from the **env.json** file
-1. Remove the **Email** nested struct from the **Info** struct in the **bootstrap** package
-1. Remove any code setting up the package from the **RegisterServices()** function in the **bootstrap** package
+1. Remove the **Email** nested struct from the **Info** struct in the **boot** package
+1. Remove any code setting up the package from the **RegisterServices()** function in the **boot** package
 1. Remove the **lib/email** package from the filesystem
 1. Find any references to the **lib/email** package in your code using the jay command line, `jay find . "lib/email"`,
 then delete the imports and referencing code

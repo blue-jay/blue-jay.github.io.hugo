@@ -14,13 +14,14 @@ The project is organized into the following folders:
 asset/
 |----dynamic/    - private assets like SASS files, single JavaScript files, and logo.png for favicon generation
 |----static/     - public assets like CSS, JavaScript, and favicon.ico for Android, Apple, etc
-bootstrap/	     - package for initial set up of the application
+boot/            - package for initial set up of the application
 controller/	     - packages with routes and application logic
-database/
-|----migration/  - SQL files for migration database up and down
+filestorage/     - files uploaded from an HTML form
 generate/	     - template pairs (.gen and .json) for generating code using jay
-lib/             - packages with minimum dependencies
+lib/             - packages you'll build that are used by the application (recommended to build with minimum dependencies)
 middleware/      - packages that return a http.Handler to wrap around routes for ACL, request logging, etc
+migration/       - migration database files
+|----mysql/      - MySQL files for migrating database up and down
 model/		     - packages with database queries and structs matching tables
 view/            - HTML templates parsed using the Go html/template package
 viewfunc/        - packages that return a template.FuncMap for use in views
@@ -53,18 +54,19 @@ golang.org/x/crypto/bcrypt 				- password hashing algorithm
 
 ## Jay Structure
 
-The project is organized into the following folders:
+The project is simply a command-line interface for packages in the Core library
+https://github.com/blue-jay/core. The packages that Jay uses from the Core
+library are:
 
 ```text
 env/       - package that creates and updates the env.json config file
 find/      - package that finds case-sensitive matched text in files
 generate/  - package that generates code from template pairs
-lib/       - packages with minimum dependencies
 migrate/   - package that handles the database migrations
 replace/   - package that replaces case-sensitive matched text in files
 ```
 
-The following file exists at the project root:
+The following file exists at the project root of Jay:
 
 ```text
 jay.go     - entrypoint for the application
@@ -72,10 +74,16 @@ jay.go     - entrypoint for the application
 
 ## Jay External Go Packages
 
-There are a few external packages used in Jay:
+There is only one external packages used in Jay (not including the Core
+library):
 
 ```text
-github.com/go-sql-driver/mysql 	  - MySQL driver
-github.com/jmoiron/sqlx 		  - MySQL general purpose extensions
 gopkg.in/alecthomas/kingpin.v2    - command-line and flag parser
 ```
+
+## Core Structure
+
+The Core project contains many packages that are all divided into individual
+folders. Each is well documented so the
+[GoDoc](https://godoc.org/github.com/blue-jay/core) page should provide enough
+information on each one.

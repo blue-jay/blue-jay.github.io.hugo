@@ -32,8 +32,9 @@ so the files can be accessed like this:
 <link media="all" rel="stylesheet" type="text/css" href="/static/css/all.css?1466973904" />
 ```
 
-Check out the [Controllers](/controllers) and [Views](/views) pages for how
-the files are served and how to append timestamps to them to manage caching.
+Check out the [Controllers](/controllers) and
+[Views](/views/#included-functions) pages for how
+the files are served and how timestamps are append to them for cach management.
 
 If you make changes to any of the files in the **dynamic** folder, you still
 need a way to compile/minify them and then move them to the **static** folder

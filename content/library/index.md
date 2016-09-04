@@ -5,17 +5,21 @@ weight: 65
 
 ## Basic Usage
 
-If you look through the **lib** folder, you'll see packages that provide
+If you look through the [**Core**](https://github.com/blue-jay/core) library,
+you'll see packages that provide
 different functionality. These packages are designed to be shared and used
-through the application. Since Blueprint is a web application, the packages
-must be thread-safe to ensure they won't throw any errors if they are accessed
-at the same time by two separate threads.
+through the application. Since Blueprint is a web application, some of the
+packages must be thread-safe to ensure they won't throw any errors if they are
+accessed at the same time by two separate threads.
+
+As you create your own packages, you can store them in the **blueprint/lib**
+folder to keep them organized and separate.
 
 It's a good idea to keep them light on dependencies so you can reuse them again
 in later projects. Packages that are too tightly-coupled require time to rework
 so you might as well do it right from the start.
 
-Let's take a look at the **lib/email** package in sections. The first of the
+Let's take a look at the **email** package in sections. The first of the
 three sections is the package declaration and import section. Notice how the
 only packages the **email** package uses are part of the standard library. This
 is a good indicator that the package could be moved to a different project
@@ -35,13 +39,13 @@ import (
 
 The next section shows the thread-safe configuration that is used in many of
 the lib packages. The Info struct holds the details for the SMTP server and is
-public so it can be nested in the **Info** struct of the **bootstrap** package
+public so it can be nested in the **Info** struct of the **boot** package
 and then parsed from the env.json file. See the [Configuration](/configuration/)
 section for more information about adding to env.json.
 
 There are also a few methods standard to the lib packages:
 
-- SetConfig() - allows the **bootstrap** package to store the Info struct to a package level variable
+- SetConfig() - allows the **boot** package to store the Info struct to a package level variable
 - ResetConfig() - allows test packages to reset the configuration
 - Config() - returns the configuration so the values can be accessed by other packages
 

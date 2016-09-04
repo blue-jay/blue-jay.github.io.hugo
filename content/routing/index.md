@@ -12,7 +12,7 @@ The controller files are all organized under the **controller** folder.
 
 ## Routing
 
-In the **bootstrap** package, the **RegisterServices()** function
+In the **boot** package, the **RegisterServices()** function
 calls the **controller.LoadRoutes()** function. The **LoadRoutes()** function in
  the **controller** package loads the routes for each of the individual
  controllers:
@@ -78,8 +78,9 @@ import (
 	"path"
 
 	"github.com/blue-jay/blueprint/controller/status"
-	"github.com/blue-jay/blueprint/lib/asset"
-	"github.com/blue-jay/blueprint/lib/router"
+
+	"github.com/blue-jay/core/asset"
+	"github.com/blue-jay/core/router"
 )
 
 // Load the routes.
@@ -117,8 +118,8 @@ package status
 import (
 	"net/http"
 
-	"github.com/blue-jay/blueprint/lib/router"
-	"github.com/blue-jay/blueprint/lib/view"
+	"github.com/blue-jay/core/router"
+	"github.com/blue-jay/core/view"
 )
 
 // Load the routes.
@@ -137,11 +138,13 @@ func Error404(w http.ResponseWriter, r *http.Request) {
 }
 
 // Error405 - Method Not Allowed.
-func Error405(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusMethodNotAllowed)
-	v := view.New("status/index")
-	v.Vars["title"] = "405 Method Not Allowed"
-	v.Vars["message"] = "Method is not allowed."
-	v.Render(w, r)
+func Error405(allowedMethods string) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		v := view.New("status/index")
+		v.Vars["title"] = "405 Method Not Allowed"
+		v.Vars["message"] = "Method is not allowed."
+		v.Render(w, r)
+	}
 }
 ```

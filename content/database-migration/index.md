@@ -7,8 +7,8 @@ weight: 80
 
 Database migrations are a great way to manage incremental database changes.
 The migration state is stored in the same database (the one specified in
-env.json) and recorded in the **migration** table. This is how the `jay status`
-command knows which migration was performed last.
+env.json) and recorded in the **migration** table. This is how the
+`jay migrate:mysql status`command knows which migration was performed last.
 
 Each incremental change should have a set of two files: an 'up' file and a
 'down' file. The 'up' file contains code (like SQL) which is applied to the
@@ -16,11 +16,11 @@ database you add features or fix bugs in your database. The 'down' file contains
 the code to remove the change or undo it.
 
 **Note**: The `jay migrate` commands requires the environment variable,
-JAYCONFIG, to point to the env.json file path. The **database** folder
-containing the **migration** folder must also be in the same folder.
+**JAYCONFIG**, to point to the env.json file path. The migration folder is specified
+in the env.json file under **MySQL.MigrationFolder**.
 
 When you start using **Blueprint** you'll see two migration files already exist
-in the **database/mysql** folder:
+in the **migration/mysql** folder:
 
 * 20160630_020000.000000_init.up.sql - adds the initial tables and data
 * 20160630_020000.000000_init.down.sql - removes the tables and data

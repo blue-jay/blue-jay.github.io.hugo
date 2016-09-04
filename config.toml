@@ -45,7 +45,7 @@ twitter = ""
 github  = "blue-jay"
 
 [[menu.main]]
-name   = "Toolkit Overview"
+name   = "Blue Jay Overview"
 url    = "/"
 weight = 0
 

@@ -1,5 +1,5 @@
 ---
-title: Toolkit Overview
+title: Blue Jay Overview
 type: index
 weight: 0
 ---
@@ -10,7 +10,8 @@ There are a few components:
 
 - [**Blueprint**](https://github.com/blue-jay/blueprint) is a model-view-controller (MVC) style web skeleton.
 - [**Jay**](https://github.com/blue-jay/jay) is a command line tool with find/replace, database migrations, and code generation.
-- [**Core**](https://github.com/blue-jay/core) is a collection of packages used by Blueprint and Jay.
+- [**Core**](https://github.com/blue-jay/core) is a collection of packages used
+by Blueprint and Jay that can also be used by other projects.
 
 ## High Level
 
@@ -19,10 +20,10 @@ The application has a public home page, authenticated home page, login page,
 register page, about page, and a simple notepad to demonstrate GET, POST,
 PATCH, and DELETE operations.
 
-The entrypoint for the web app is **blueprint.go** which uses the **bootstrap**
-package to load the application settings, create the session store, connect to
-the database, set up the views, load the routes, attach the middleware, and then
-start the web server.
+The entrypoint for the web app is **blueprint.go** which uses the **boot**
+package to load (at boot) the application settings, create the session store,
+connect to the database, set up the views, load the routes, attach the
+middleware, and then start the web server.
 
 The front end is built using [Bootstrap](http://getbootstrap.com/) with a few
 small changes to fonts and
@@ -45,7 +46,7 @@ build files like controllers, models, middleware, or even multiple views.
 All templates (*.gen files) are parsed using
 the **text/template** package from the Go standard library and all generation
 instructions (*.json files) allow you to specify which variables to pass via
-**jay** as well as in which folder to create the templates. You can also build
+**Jay** as well as in which folder to create the templates. You can also build
 collections of templates to generate more than one file set which is great when
 you want to scaffold out a component with CRUD (create, read, update, and delete).
 
@@ -59,7 +60,7 @@ you want to scaffold out a component with CRUD (create, read, update, and delete
   * On Windows: `SET JAYCONFIG=C:\bluejay\workspace\src\github.com\blue-jay\blueprint\env.json`
   * On Linux/OS X: `export JAYCONFIG=$HOME/workspace/src/github.com/blue-jay/blueprint/env.json`
 1. Start a MySQL instance.
-1. Edit the **Database** section of env.json to match your database login information.
+1. Edit the **MySQL** section of env.json to match your database login information.
 1. Create the database and tables using the command: `jay migrate:mysql all`
 1. Run the application: `go run blueprint.go`
 1. Open your web browser to http://localhost and you should see the welcome page.
@@ -80,13 +81,13 @@ There are also more detailed guides available by operating system:
 1. To download Blueprint, run the following command: `go get github.com/blue-jay/blueprint`
 1. Start a MySQL instance.
 1. Make a copy of env.json.example and name it: **env.json**
-1. Edit the **Database** section in **env.json** so the connection information matches your MySQL instance.
+1. Edit the **MySQL** section in **env.json** so the connection information matches your MySQL instance.
 1. In the **Session** section, you should generate new passwords for the following keys:
   * AuthKey should be a 64 byte password and then base64 encoded
   * EncryptKey should be a 32 byte password and then base64 encoded
   * CSRFKey should be a 32 byte password and then base64 encoded
 1. Create a database called **blueprint** in MySQL.
-1. Import **database/mysql/20160630_020000.000000_init.up.sql** to create the tables.
+1. Import **migration/mysql/20160630_020000.000000_init.up.sql** to create the tables.
 1. In your terminal, CD to the **blueprint** folder.
 1. Run the application using the command: `go run blueprint.go`
 1. Open your web browser to http://localhost and you should see the welcome page.
@@ -111,7 +112,7 @@ be able to write code once and use it in all of your other projects. The **lib**
 folder is a great place for all these packages with very few dependencies.
 
 You'll also notice certain packages need to be thread-safe when building web applications.
-An example is the **lib/view** package which provides thread-safe template caching.
+An example is the **github.com/core/view** package which provides thread-safe template caching.
 
 The other reason for Blue Jay is the command-line tool, **jay**, which provides an easy way
 to find/replace in a project when refactoring, migrate your database forwards or backwards, and

@@ -9,9 +9,10 @@ Code generation makes it easy to build out new features so you don't have to
 retype or copy and paste the same code over again. It's especially useful when
 prototyping and need to see how something will look or work.
 
-**Note**: The `jay migrate` commands requires the environment variable,
-JAYCONFIG, to point to the env.json file path. The **generation** folder must
-also be in the same folder.
+**Note**: The `jay generate` commands requires the environment variable,
+**JAYCONFIG**, to point to the env.json file path. The generation folder
+containing the templates is specified in the env.json file under
+**Generation.TemplateFolder**.
 
 **Jay** tries to make it easy to generate code by using tools that you already
 know: the **text/template** package from the standard Go library and JSON.
@@ -168,7 +169,8 @@ import (
 	"net/http"
 
 	"github.com/blue-jay/blueprint/controller/status"
-	"github.com/blue-jay/blueprint/lib/router"
+
+	"github.com/blue-jay/core/router"
 )
 
 var (
@@ -229,7 +231,8 @@ import (
 	"net/http"
 
 	"github.com/blue-jay/blueprint/controller/status"
-	"github.com/blue-jay/blueprint/lib/router"
+
+	"github.com/blue-jay/core/router"
 )
 
 var (
