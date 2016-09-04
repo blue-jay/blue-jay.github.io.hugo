@@ -55,7 +55,7 @@ form validation, form repopulation, and URL parameters.
   - bare.gen | bare.json - creates a bare model with only placeholder functions
   - default.gen | default.json - creates a model with CRUD ready code
 - view
-  - base.json - creates four bare views with only a basic structure
+  - bare.json - creates four bare views with only a basic structure
   - create.gen | create.json - creates a CRUD ready creation form view
   - create_bare.gen | create_bare.json - creates a bare view with only a basic structure
   - default.json - creates four views with CRUD ready code
@@ -217,7 +217,7 @@ To generate this template, the command would look like this. Notice the second
 variable, **url**.
 
 ```bash
-jay generate controller/base package:monkey url:banana
+jay generate controller/bare package:monkey url:banana
 ```
 
 The final output would be to the file, **controller/monkey/monkey.go**, and
