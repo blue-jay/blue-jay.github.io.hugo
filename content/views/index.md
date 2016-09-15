@@ -28,7 +28,7 @@ A view should include the four **define** blocks (**title**, **head**, **content
 Since this view is stored at **view/about/index.tmpl**, we may render it using the **view** helper package like so:
 
 ```go
-// import "github.com/blue-jay/blueprint/lib/view"
+// import "github.com/blue-jay/core/view"
 v := view.New("about/index")
 // Variables would go here like this: v.Vars["first_name"] = session.Values["first_name"]
 v.Render(w, r)
@@ -37,7 +37,7 @@ v.Render(w, r)
 If you don't have to pass any variables to the template, you could shorten it like this:
 
 ```go
-// import "github.com/blue-jay/blueprint/lib/view"
+// import "github.com/blue-jay/core/view"
 view.New("about/index").Render(w, r)
 ```
 
@@ -199,8 +199,8 @@ and static files easier:
 ## View Variables
 
 There is an easy way to add variables so they are available in the views. The
-**viewmodify** folder contains packages that define variables and add them to
-the view.Vars map. Since you are editing the map right before it renders, it
+**viewmodify** folder contains packages that define variables in the view.Vars
+map. Since you are editing the map right before it renders, it
 will overwrite any other variables that were set in the controllers so it's best
 to choose names or pick a naming convention for your variables.
 
@@ -399,7 +399,7 @@ package to change the HTTP method from a URL query string. The **rest** middlewa
 already applied to every request in the **boot** package.
 
 To change the method, add this line to your form action and change the value
-**value** to match a method like **DELETE** or **PATCH**. It will automatically
+to match a method like **DELETE** or **PATCH**. It will automatically
 be converted to uppercase.
 
 The query string key should be: **_method**.
