@@ -42,10 +42,12 @@ form validation, form repopulation, and URL parameters.
 - controller
   - bare.gen | bare.json - creates a bare controller with only placeholder functions
   - default.gen | default.json - creates a controller with CRUD ready code with the **flight** package
+  - nameonly.gen | nameonly.json - creates a controller with CRUD ready code with the **flight** package and only a **name** column
   - noflight.gen | noflight.json - creates a controller with CRUD ready code without the **flight** package
 - crud
   - bare.json - creates a bare controller, model, and four views
   - default.json - creates a controller, model, and four views CRUD ready with the **flight** package
+  - nameonly.json - creates a controller, model, and four views CRUD ready with the **flight** package and only a **name** column
   - noflight.json - creates a controller, model, and four views CRUD ready without the **flight** package
 - lib
   - default.gen | default.json - creates a thread-safe wrapper package
@@ -54,6 +56,7 @@ form validation, form repopulation, and URL parameters.
 - model
   - bare.gen | bare.json - creates a bare model with only placeholder functions
   - default.gen | default.json - creates a model with CRUD ready code
+  - nameonly.gen | nameonly.json - creates a model with CRUD ready code and only a **name** column
 - view
   - bare.json - creates four bare views with only a basic structure
   - create.gen | create.json - creates a CRUD ready creation form view
