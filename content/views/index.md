@@ -283,18 +283,60 @@ You are not logged in.
 <input type="hidden" name="token" value="{{.token}}">
 ```
 
-## Forms
+## Repopulate Form Fields
 
-When a form is submitted and there are errors like a required field is missing,
+When a form is submitted and there are errors like when a required field is missing,
 the same web page should reload. Unfortunately, forms are not refilled so there
 are a few helpers from the **form** package that will help you refill, select,
 and check.
 
-First, check out the [Repopulate Form Fields](/controllers/#repopulate-form-fields)
-section on the Controllers page. It will show you the single line of code needed
-in your controller.
+These functions actually do both form population (filling in a form from a
+database record) and form repopulation (filling in a form from a form submission
+where something went wrong like a required field was left blank). These functions
+will fill the form with values from the form submission over the values from the
+database record. If you refresh the page, the form submission values will be
+forgotten and the values from the database record will return.
 
-Then, use the blocks below in your templates. Notice that some of the HTML
+For instance, say your form has two fields: name and age. Both are required fields.
+You type in your name, John Doe, forget to type in your age, and click the submit
+button. The page will reload, show an error message, and the functions will automatically
+refill the name field with your name. The record has not been saved in the database,
+but the name field is remembered from the form submission (form repopulation).
+You enter in your age as 30, click the submit button, and the record is 
+successfully added to the database.
+
+Let's say you want to edit the database record and you want to enter in a new
+age. You load the edit page and the functions will automatically refill the
+name field and the age field with the values from the database (form population).
+You try to be sneaky and change your age to the word "thirty", instead of the
+number 30. You click the submit button, the page reloads, shows an error message,
+and refills the name field and the age. The age field will be filled with the word
+"thirty" because the form submission values take priority over the values from the
+database. If you clicked the refresh button in your browser, the age field would
+then load the number 30 from the database instead.
+
+There are two views that benefit from these functions: create.tmpl and edit.tmpl.
+You don't have to use these names, but it's just an example to show you these
+functions will primarily be used in the the template to create a new record
+in the database (create.tmpl) and the template to edit an existing record in the
+database (edit.tmpl).
+
+In the create.tmpl view, there may be required fields. If the form requires typing
+in a long block of text for a couple answers and the user forgets one of the
+required fields, when the page reloads, all the text will not be there. These
+functions will refill, select, and check all the form inputs specified in the
+controller. The create.tmpl does not use the "default value" field in these
+functions so you can set them to an empty string ("") or set them to a view
+variable so you can copy and paste the same code between create.tmpl and edit.tmpl.
+The edit.tmpl view requires the same logic, but also needs the "default value"
+to prefill, select, and check the form values from view variables (which will
+probably be pulled from a model struct).
+
+Check out the [Repopulate Form Fields](/controllers/#repopulate-form-fields)
+section on the Controllers page. It will show you the single line of code needed
+in your controller so these fields repopulate on form submission.
+
+These are the functions/blocks to use in your templates. Notice that some of the HTML
 attributes are missing like **name**, **value**, and **type** from the elements.
 The blocks will automatically fill these in for you so you don't have the write
 the name of the element multiple times. By the way, it took very little code to
@@ -303,42 +345,40 @@ add this functionality so check out the
 package to see how it was accomplished.
 
 ```html
-
-<!-- TEXT accepts the element name and then a period -->
-<input {{TEXT "email" .}} type="email" class="form-control" id="email" />
+<!-- TEXT accepts the element name, a default value, and then a period -->
+<input {{TEXT "email" .item.Email .}} type="email" class="form-control" id="email" />
 <!-- then parses to a name attribute when no repopulation value is passed -->
 <input name="email" type="email" class="form-control" id="email" />
 <!-- and parses to a name and a value when a repopulation value is passed -->
 <input name="email" value="me@example.com" type="email" class="form-control" id="email" />
 
-<!-- TEXTAREA accepts the element name and then a period -->
-<textarea rows="5" class="form-control" id="name" name="name" />{{TEXTAREA "name" .}}</textarea>
+<!-- TEXTAREA accepts the element name, a default value, and then a period -->
+<textarea rows="5" class="form-control" id="name" name="name" />{{TEXTAREA "name" .item.Name .}}</textarea>
 <!-- then parses to nothing when no repopulation value is passed -->
 <textarea rows="5" class="form-control" id="name" name="name" /></textarea>
 <!-- and parses to a value when a repopulation value is passed -->
 <textarea rows="5" class="form-control" id="name" name="name" />Sample text</textarea>
 
-<!-- CHECKBOX accepts the element name, value, and then a period -->
-<label><input {{CHECKBOX "rememberme" "r1" .}}> Remember me</label>
+<!-- CHECKBOX accepts the element name, value, default value, and then a period -->
+<label><input {{CHECKBOX "rememberme" "r1" .item.RememberMe .}}> Remember me</label>
 <!-- then parses to a type, name, and value attribute when no repopulation value is passed -->
 <label><input type="checkbox" name="rememberme" value="r1"> Remember me</label>
 <!-- and parses to a type, name, value, and the word 'checked' when a repopulation value is passed -->
 <label><input type="checkbox" name="rememberme" value="r1" checked> Remember me</label>
 
-<!-- RADIO accepts the element name, value, and then a period -->
-<label><input {{RADIO "options" "burger" .}}> Burger</label>
+<!-- RADIO accepts the element name, value, default value, and then a period -->
+<label><input {{RADIO "options" "burger" .item.Option .}}> Burger</label>
 <!-- then parses to a type, name, and value attribute when no repopulation value is passed -->
 <label><input type="radio" name="options" value="burger"> Burger</label>
 <!-- and parses to a type, name, value attribute, and the word 'checked' when a repopulation value is passed -->
 <label><input type="radio" name="options" value="burger" checked> Burger</label>
 
-<!-- OPTION accepts the element name, value, and then a period -->
-<select name="select"><option {{OPTION "select" "Apple" .}}>Apple</option></select>
+<!-- OPTION accepts the element name, value, default value, and then a period -->
+<select name="select"><option {{OPTION "select" "Apple" .item.Select .}}>Apple</option></select>
 <!-- then parses to a value attribute when no repopulation value is passed -->
 <select name="select"><option value="Apple">Apple</option></select>
 <!-- and parses to a value attribute and the word 'selected' when a repopulation value is passed -->
 <select name="select"><option value="Apple" selected>Apple</option></select>
-
 ```
 
 Here are examples of all the fields with the Bootrap structure and classes:
@@ -346,7 +386,7 @@ Here are examples of all the fields with the Bootrap structure and classes:
 ```html
 <div class="form-group">
 	<label for="email">Email Address</label>
-	<div><input {{TEXT "email" .}} type="email" class="form-control" id="email" maxlength="48" placeholder="Email" /></div>
+	<div><input {{TEXT "email" .item.Email .}} type="email" class="form-control" id="email" maxlength="48" placeholder="Email" /></div>
 </div>
 
 <div class="form-group">
@@ -356,49 +396,49 @@ Here are examples of all the fields with the Bootrap structure and classes:
 
 <div class="checkbox">
     <label>
-        <input {{CHECKBOX "rememberme" "r1" .}}> Remember me
+        <input {{CHECKBOX "rememberme" "r1" .item.RememberMe .}}> Remember me
     </label>
 </div>
 <div class="checkbox">
     <label>
-        <input {{CHECKBOX "rememberme" "r2" .}}> Remember me
+        <input {{CHECKBOX "rememberme" "r2" .item.RememberMe .}}> Remember me
     </label>
 </div>
 
 <div class="radio">
     <label>
-        <input {{RADIO "options" "burger" .}}> Burger
+        <input {{RADIO "options" "burger" .item.Option .}}> Burger
     </label>
 </div>
 <div class="radio">
     <label>
-        <input {{RADIO "options" "taco" .}}> Taco
+        <input {{RADIO "options" "taco" .item.Option .}}> Taco
     </label>
 </div>
 
 <select class="form-control" name="select">
-    <option {{OPTION "select" "Apple" .}}>Apple</option>
-    <option {{OPTION "select" "Banana" .}}>Banana</option>
-    <option {{OPTION "select" "cherry" .}}>Cherry</option>
+    <option {{OPTION "select" "Apple" .item.Select .}}>Apple</option>
+    <option {{OPTION "select" "Banana" .item.Select .}}>Banana</option>
+    <option {{OPTION "select" "cherry" .item.Select .}}>Cherry</option>
 </select>
 
 <select multiple class="form-control" name="mselect">
-    <option {{OPTION "mselect" "red" .}}>Red</option>
-    <option {{OPTION "mselect" "green" .}}>Green</option>
-    <option {{OPTION "mselect" "blue" .}}>Blue</option>
+    <option {{OPTION "mselect" "red" .item.Select .}}>Red</option>
+    <option {{OPTION "mselect" "green" .item.Select .}}>Green</option>
+    <option {{OPTION "mselect" "blue" .item.Select .}}>Blue</option>
 </select>
 ```
 
 ## Change HTTP Methods
 
-When you submit a form a a website, the site most likely it sends a POST
+When you submit a form a a website, the site most likely sends a POST
 request to the server. In order for us to make our application more RESTful, we
 can use utilize the simple
 [**rest**](https://github.com/blue-jay/blueprint/blob/master/middleware/rest/rest.go)
 package to change the HTTP method from a URL query string. The **rest** middleware is
-already applied to every request in the **boot** package.
+already applied to every request which is configured in the **boot** package.
 
-To change the method, add this line to your form action and change the value
+To change the form method, add this line to your form action and change the value
 to match a method like **DELETE** or **PATCH**. It will automatically
 be converted to uppercase.
 
@@ -419,12 +459,12 @@ PATCH HTTP method:
 <form method="post" action="{{$.CurrentURI}}?_method=patch">
 	<div class="form-group">
 		<label for="email">Email Address</label>
-		<div><input {{TEXT "email" .}} type="email" class="form-control" id="email" /></div>
+		<div><input {{TEXT "email" .item.Email .}} type="email" class="form-control" id="email" /></div>
 	</div>
 	
 	<div class="form-group">
 		<label for="password">Password</label>
-		<div><input {{TEXT "password" .}} type="password" class="form-control" id="password" /></div>
+		<div><input {{TEXT "password" .item.Password .}} type="password" class="form-control" id="password" /></div>
 	</div>
 	
 	<input type="submit" class="btn btn-primary" value="Change" class="button" />

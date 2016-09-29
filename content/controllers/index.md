@@ -104,8 +104,8 @@ if valid, missingField := form.Required(r, "email", "password"); !valid {
 The **form** package can also repopulate the form fields after a submission that
 is missing information. It is also a
 variadic function so it can accepts more than one field. You'll need to use
-blocks from the **form** package in your view as well. Check out the [Views](/views)
-page to see how to use them.
+blocks from the **form** package in your view as well. Check out the
+[Views](/views/#repopulate-form-fields) page to see how to use them.
 
 ```go
 // Index displays the login page.
