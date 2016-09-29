@@ -191,7 +191,7 @@ and static files easier:
 {{.SomeVariable | NOESCAPE}}
 
 <!-- Time format -->
-{{.SomeTime | PRETTYTIME}}
+{{NULLTIME .SomeTime}}
 <!-- parses to format -->
 3:04 PM 01/02/2006
 ```

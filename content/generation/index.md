@@ -49,6 +49,7 @@ form validation, form repopulation, and URL parameters.
   - default.json - creates a controller, model, and four views CRUD ready with the **flight** package
   - nameonly.json - creates a controller, model, and four views CRUD ready with the **flight** package and only a **name** column
   - noflight.json - creates a controller, model, and four views CRUD ready without the **flight** package
+  - table.json - creates a controller, model, and four views CRUD ready with the **flight** package and only a **name** column that displays in a table view
 - lib
   - default.gen | default.json - creates a thread-safe wrapper package
 - middleware
@@ -64,11 +65,14 @@ form validation, form repopulation, and URL parameters.
   - default.json - creates four views with CRUD ready code
   - edit.gen | edit.json - creates a CRUD ready edit form view
   - edit_bare.gen | edit_bare.json - creates a bare view with only a basic structure
-  - index.gen | index.json - creates a CRUD ready display view
+  - index.gen | index.json - creates a CRUD ready display view for multiple items
   - index_bare.gen | index_bare.json - creates a bare view with only a basic structure
-  - show.gen | show.json - creates a CRUD ready display view
+  - index_table.gen | index_table.json - creates a CRUD ready table view for multiple items
+  - show.gen | show.json - creates a CRUD ready display view for a single item
   - show_bare.gen | show_bare.json - creates a bare view with only a basic structure
+  - show_table.gen | show_table.json - creates a CRUD ready table view for a single item
   - single.gen | single.json - creates a bare view with only a basic structure
+  - table.json - creates four views with CRUD ready code in a table view
 - viewfunc
   - default.gen | default.json - creates a FuncMap package for use with the **html/template** package
 - viewmodify
