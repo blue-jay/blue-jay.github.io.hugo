@@ -36,19 +36,17 @@ func Load() {
 	...
 }
 
-// "Index" is the Function
+// Index displays the items.
 func Index(w http.ResponseWriter, r *http.Request) {
 	c := flight.Context(w, r)
 
-	items, err := note.ByUserID(c.UserID)
+	items, _, err := note.ByUserID(c.DB, c.UserID)
 	if err != nil {
 		c.FlashError(err)
 		items = []note.Item{}
 	}
 
-	// "index" is the View
-	v := view.New("note/index")
-	v.Vars["first_name"] = c.Sess.Values["first_name"]
+	v := c.View.New("note/index")
 	v.Vars["items"] = items
 	v.Render(w, r)
 }
@@ -62,7 +60,7 @@ them.
 
 ```go
 // Get the current session
-sess := session.Instance(r)
+sess, _ := session.Instance(r)
 ...
 // Save the session after you are finished making changes
 sess.Save(r, w)
@@ -85,16 +83,26 @@ sess.Save(r, w) // Ensure you save the session after making a change to it
 
 ## Validate a Form
 
-The **form** package makes it easy to validate required fields. It works on the 
-inputs: text, textarea, checkbox, radio, and select. The function, 
+The **form** package makes it easy to validate required fields. It works on the
+inputs: text, textarea, checkbox, radio, and select. The function,
 **form.Required()**, requires the request and then any number of fields
-as it is a variadic function.
+as it is a variadic function. You can use the `form` package by itself it you
+want more control over the error message or you can use the `flight` package
+which handles the error message for you:
 
 ```go
+// Without flight
 if valid, missingField := form.Required(r, "email", "password"); !valid {
 	sess.AddFlash(flash.Info{"Field missing: " + missingField, flash.Error})
 	sess.Save(r, w)
 	LoginGET(w, r)
+	return
+}
+
+// With flight
+c := flight.Context(w, r)
+if !c.FormValid("name", "email", "password") {
+	Create(w, r)
 	return
 }
 ```
@@ -108,12 +116,17 @@ blocks from the **form** package in your view as well. Check out the
 [Views](/views/#repopulate-form-fields) page to see how to use them.
 
 ```go
-// Index displays the login page.
-func Index(w http.ResponseWriter, r *http.Request) {
-	v := view.New("login/index")
-	form.Repopulate(r.Form, v.Vars, "email")
-	v.Render(w, r)
-}
+// Without flight
+c := flight.Context(w, r)
+v := c.View.New("note/create")
+form.Repopulate(r.Form, v.Vars, "name")
+v.Render(w, r)
+
+// With flight
+c := flight.Context(w, r)
+v := c.View.New("note/create")
+c.Repopulate(v.Vars, "name")
+v.Render(w, r)
 ```
 
 ## Render a Template
@@ -123,16 +136,18 @@ page for more clarification):
 
 ```go
 // Render without adding any variables
-view.New("about/index").Render(w, r)
+c := flight.Context(w, r)
+c.View.New("about/index").Render(w, r)
 
 // Render with variables
-session := session.Instance(r)
-v := view.New("home/index")
-v.Vars["first_name"] = session.Values["first_name"]
+c := flight.Context(w, r)
+v := c.View.New("home/index")
+v.Vars["first_name"] = c.Sess.Values["first_name"]
 v.Render(w, r)
 
 // Render with different base template (base.tmpl is used by default)
-v := view.New("home/index").Base("single")
+c := flight.Context(w, r)
+v := c.View.New("home/index").Base("single")
 v.Render(w, r)
 ```
 
@@ -153,12 +168,11 @@ func Load() {
 
 // Index displays the flash messages in JSON.
 func Index(w http.ResponseWriter, r *http.Request) {
-	// Get session
-	sess := session.Instance(r)
+	c := flight.Context(w, r)
 
 	// Set the flash message
-	sess.AddFlash(flash.Info{"An error occurred on the server. Please try again later.", flash.Error})
-	sess.Save(r, w)
+	c.Sess.AddFlash(flash.Info{"An error occurred on the server. Please try again later.", flash.Error})
+	c.Sess.Save(r, w)
 
 	// Display the flash messages as JSON
 	flash.SendFlashes(w, r)
@@ -179,14 +193,14 @@ functions to interact with the data.
 
 ```go
 // Get database result
-result, err := user.ByEmail(email)
+result, norows, err := user.ByEmail(email)
 
-if err == model.ErrNoResult {
+if nowrows {
 	// User does not exist
 } else if err != nil {
 	// Display error message
 } else if passhash.MatchString(result.Password, password) {
-	// Password matches!	
+	// Password matches!
 } else {
 	// Password does not match
 }
@@ -199,11 +213,10 @@ env.json point to your SMTP server.
 
 ```go
 // Email a user
-err := email.Send(email.Config().From, "This is the subject", "This is the body!")
+c := flight.Context(w, r)
+err := c.Config.Email.Send("This is the subject", "This is the body!")
 if err != nil {
-	log.Println(err)
-	sess.AddFlash(flash.Info{"An error occurred on the server. Please try again later.", flash.Error})
-	sess.Save(r, w)
+	c.FlashError(err)
 	return
 }
 ```

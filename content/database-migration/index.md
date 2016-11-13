@@ -15,9 +15,13 @@ Each incremental change should have a set of two files: an 'up' file and a
 database you add features or fix bugs in your database. The 'down' file contains
 the code to remove the change or undo it.
 
-**Note**: The `jay migrate` commands requires the environment variable,
+**Note 1**: The `jay migrate` commands requires the environment variable,
 **JAYCONFIG**, to point to the env.json file path. The migration folder is specified
 in the env.json file under **MySQL.MigrationFolder**.
+
+**Note 2**: Make sure you do not create any migrations with a date earlier than
+any applied migrations. Jay will not go back and apply them. They must be
+created sequentially.
 
 When you start using **Blueprint** you'll see two migration files already exist
 in the **migration/mysql** folder:

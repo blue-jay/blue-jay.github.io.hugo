@@ -14,22 +14,21 @@ A view should include the four **define** blocks (**title**, **head**, **content
 {{define "title"}}About Blueprint{{end}}
 {{define "head"}}{{end}}
 {{define "content"}}
-<div class="container">
 	<div class="page-header">
 		<h1>{{template "title" .}}</h1>
 	</div>
 	<p>Blueprint lays the foundation for your web application using the Go language.</p>
 	{{template "footer" .}}
-</div>
 {{end}}
 {{define "foot"}}{{end}}
 ```
 
-Since this view is stored at **view/about/index.tmpl**, we may render it using the **view** helper package like so:
+Since this view is stored at **view/about/index.tmpl**, we render it using the **view** helper package like so:
 
 ```go
 // import "github.com/blue-jay/core/view"
-v := view.New("about/index")
+c := flight.Context(w, r)
+v := c.View.New("about/index")
 // Variables would go here like this: v.Vars["first_name"] = session.Values["first_name"]
 v.Render(w, r)
 ```
@@ -38,7 +37,8 @@ If you don't have to pass any variables to the template, you could shorten it li
 
 ```go
 // import "github.com/blue-jay/core/view"
-view.New("about/index").Render(w, r)
+c := flight.Context(w, r)
+c.View.New("about/index").Render(w, r)
 ```
 
 ## Base Template
@@ -47,14 +47,16 @@ By default, the **view/base.tmpl** template is used as the base template (as spe
 change the base template for a template, you can try this:
 
 ```go
-v := view.New("about/index").Base("alternate")
+c := flight.Context(w, r)
+v := c.View.New("about/index").Base("alternate")
 v.Render(w, r)
 ```
 
 A shorter way to specify the view with a different base template and then render is like this:
 
 ```go
-view.New("about/about").Base("alternate").Render(w, r)
+c := flight.Context(w, r)
+c.View.New("about/about").Base("alternate").Render(w, r)
 ```
 
 ## View Package
@@ -67,29 +69,32 @@ following:
 * ability to extend the list of functions available in templates
 * ability to modify the variables available in templates
 
-The set up of the **view** package is handled by the **boot** package:
+The set up of the **view** package is handled by the **lib/boot** package. The
+config is then passed to `flight` so it can be accessed by controllers.
 
 ```go
 // Set up the views
-view.SetConfig(config.View)
-view.SetTemplates(config.Template.Root, config.Template.Children)
+config.View.SetTemplates(config.Template.Root, config.Template.Children)
 
 // Set up the functions for the views
-view.SetFuncMaps(
-	asset.Map(config.View.BaseURI),
+config.View.SetFuncMaps(
+	config.Asset.Map(config.View.BaseURI),
 	link.Map(config.View.BaseURI),
 	noescape.Map(),
 	prettytime.Map(),
 	form.Map(),
 )
 
-// Set up the variables for the views
-view.SetModifiers(
+// Set up the variables and modifiers for the views
+config.View.SetModifiers(
 	authlevel.Modify,
 	uri.Modify,
-	token.Modify,
+	xsrf.Token,
 	flash.Modify,
 )
+
+// Store the variables in flight
+flight.StoreConfig(*config)
 ```
 
 ## Organization
@@ -113,10 +118,10 @@ base.tmpl            - base template for all pages
 
 ## View Functions
 
-The Go template packages supports passing in a FuncMap which maps names to a
+The Go template packages supports passing a FuncMap which maps names to a
 function. This means you can add functions so they are available to the views.
 These functions are stored in the **viewfunc** folder. Here is an example of a
-LINK function that can be used to create hyperlinks and the code is stored in
+**LINK** function that can be used to create hyperlinks and the code is stored in
 **viewfunc/link/link.go**:
 
 ```go
@@ -153,12 +158,12 @@ And the code would render like this:
 ```
 
 Once you create a new funcmap, you make it available to the views by adding it
-to the **view.SetFuncMaps()** function in the **boot/boot.go** file:
+to the **view.SetFuncMaps()** function in the **lib/boot/boot.go** file:
 
 ```go
 // Set up the functions for the views
-view.SetFuncMaps(
-	asset.Map(config.View.BaseURI),
+config.View.SetFuncMaps(
+	config.Asset.Map(config.View.BaseURI),
 	link.Map(config.View.BaseURI),
 	noescape.Map(),
 	prettytime.Map(),
@@ -168,7 +173,7 @@ view.SetFuncMaps(
 
 ## Included Functions
 
-There are a few functions that are included to make working with the templates 
+There are a few functions that are included to make working with the templates
 and static files easier:
 
 ```html
@@ -190,8 +195,13 @@ and static files easier:
 <!-- Output an unescaped variable (not a safe idea, but it is useful when troubleshooting) -->
 {{.SomeVariable | NOESCAPE}}
 
-<!-- Time format -->
+<!-- Time format for mysql.NullTime -->
 {{NULLTIME .SomeTime}}
+<!-- parses to format -->
+3:04 PM 01/02/2006
+
+<!-- Time format helper for mysql.NullTime that shows the latest of the two variables -->
+{{PRETTYTIME .CreatedAt .UpdatedAt}}
 <!-- parses to format -->
 3:04 PM 01/02/2006
 ```
@@ -210,6 +220,7 @@ if you need to display a different view or use a different base template.
 In the **viewmodify/authlevel/authlevel.go** file, the **AuthLevel** variable is
 made available so the views can determine if the user is authenticated or not:
 
+[Source](https://github.com/blue-jay/blueprint/blob/master/viewmodify/authlevel/authlevel.go)
 ```go
 // Package authlevel adds an AuthLevel variable to the view template.
 package authlevel
@@ -217,22 +228,23 @@ package authlevel
 import (
 	"net/http"
 
-	"github.com/blue-jay/core/session"
+	"github.com/blue-jay/blueprint/lib/flight"
 	"github.com/blue-jay/core/view"
 )
 
 // Modify sets AuthLevel in the template to auth if the user is authenticated.
 // Sets AuthLevel to anon if not authenticated.
 func Modify(w http.ResponseWriter, r *http.Request, v *view.Info) {
-	sess := session.Instance(r)
+	c := flight.Context(w, r)
 
 	// Set the AuthLevel to auth if the user is logged in
-	if sess.Values["id"] != nil {
+	if c.Sess.Values["id"] != nil {
 		v.Vars["AuthLevel"] = "auth"
 	} else {
 		v.Vars["AuthLevel"] = "anon"
 	}
 }
+
 ```
 
 To use the variable, you could write this type of logic into your view:
@@ -246,11 +258,11 @@ You are not logged in.
 ```
 
 Once you create a new package, you make it available to the views by adding it
-to the **view.SetModifiers()** function in the **boot/boot.go** file:
+to the **view.SetModifiers()** function in the **lib/boot/boot.go** file:
 
 ```go
 // Set up the variables and modifiers for the views
-view.SetModifiers(
+config.View.SetModifiers(
 	authlevel.Modify,
 	uri.Modify,
 	xsrf.Token,
@@ -302,7 +314,7 @@ You type in your name, John Doe, forget to type in your age, and click the submi
 button. The page will reload, show an error message, and the functions will automatically
 refill the name field with your name. The record has not been saved in the database,
 but the name field is remembered from the form submission (form repopulation).
-You enter in your age as 30, click the submit button, and the record is 
+You enter in your age as 30, click the submit button, and the record is
 successfully added to the database.
 
 Let's say you want to edit the database record and you want to enter in a new
@@ -461,14 +473,14 @@ PATCH HTTP method:
 		<label for="email">Email Address</label>
 		<div><input {{TEXT "email" .item.Email .}} type="email" class="form-control" id="email" /></div>
 	</div>
-	
+
 	<div class="form-group">
 		<label for="password">Password</label>
 		<div><input {{TEXT "password" .item.Password .}} type="password" class="form-control" id="password" /></div>
 	</div>
-	
+
 	<input type="submit" class="btn btn-primary" value="Change" class="button" />
-	
+
 	<input type="hidden" name="_token" value="{{$.token}}">
 </form>
 ```

@@ -25,6 +25,7 @@ only packages the **email** package uses are part of the standard library. This
 is a good indicator that the package could be moved to a different project
 without rewriting.
 
+[Source](https://github.com/blue-jay/core/blob/master/email/email.go)
 ```go
 // Package email provides email sending via SMTP.
 package email
@@ -33,35 +34,15 @@ import (
 	"encoding/base64"
 	"fmt"
 	"net/smtp"
-	"sync"
 )
 ```
 
-The next section shows the thread-safe configuration that is used in many of
-the lib packages. The Info struct holds the details for the SMTP server and is
-public so it can be nested in the **Info** struct of the **boot** package
+The Info struct holds the details for the SMTP server and it should be
+added to the **Info** struct of the **lib/env** package
 and then parsed from the env.json file. See the [Configuration](/configuration/)
 section for more information about adding to env.json.
 
-There are also a few methods standard to the lib packages:
-
-- SetConfig() - allows the **boot** package to store the Info struct to a package level variable
-- ResetConfig() - allows test packages to reset the configuration
-- Config() - returns the configuration so the values can be accessed by other packages
-
-All of these methods are thread-safe so they can be called by external packages
-and by the functions within the package itself.
-
 ```go
-// *****************************************************************************
-// Thread-Safe Configuration
-// *****************************************************************************
-
-var (
-	info      Info
-	infoMutex sync.RWMutex
-)
-
 // Info holds the details for the SMTP server.
 type Info struct {
 	Username string
@@ -70,48 +51,27 @@ type Info struct {
 	Port     int
 	From     string
 }
-
-// SetConfig stores the config.
-func SetConfig(i Info) {
-	infoMutex.Lock()
-	info = i
-	infoMutex.Unlock()
-}
-
-// ResetConfig removes the config.
-func ResetConfig() {
-	infoMutex.Lock()
-	info = Info{}
-	infoMutex.Unlock()
-}
-
-// Config returns the config.
-func Config() Info {
-	infoMutex.RLock()
-	defer infoMutex.RUnlock()
-	return info
-}
 ```
 
-The final section of the **email** package contains the ability to send an
-email using the configuration settings. You'll notice the **Config()** function
-through the code. This ensures the values are accessed in a thread-safe manner
-so there is no problem if another package tries to change a value at the same
-time.
+The final section of the **email** package sends an
+email using the configuration settings. You'll notice the function is a
+struct method which makes it really easy to use from the **flight** package.
 
 ```go
-// Send mails an email.
-func Send(to, subject, body string) error {
-	auth := smtp.PlainAuth("", Config().Username, Config().Password, Config().Hostname)
+// Send an email.
+func (c Info) Send(to, subject, body string) error {
+	auth := smtp.PlainAuth("", c.Username, c.Password, c.Hostname)
 
+	// Create the header
 	header := make(map[string]string)
-	header["From"] = Config().From
+	header["From"] = c.From
 	header["To"] = to
 	header["Subject"] = subject
 	header["MIME-Version"] = "1.0"
 	header["Content-Type"] = `text/plain; charset="utf-8"`
 	header["Content-Transfer-Encoding"] = "base64"
 
+	// Set the message
 	message := ""
 	for k, v := range header {
 		message += fmt.Sprintf("%s: %s\r\n", k, v)
@@ -120,9 +80,9 @@ func Send(to, subject, body string) error {
 
 	// Send the email
 	err := smtp.SendMail(
-		fmt.Sprintf("%s:%d", Config().Hostname, Config().Port),
+		fmt.Sprintf("%s:%d", c.Hostname, c.Port),
 		auth,
-		Config().From,
+		c.From,
 		[]string{to},
 		[]byte(message),
 	)
@@ -131,7 +91,23 @@ func Send(to, subject, body string) error {
 }
 ```
 
+To use in a controller, you would get the context from the **flight** package
+and then from the **Config** variable, you could access the **email** struct and then
+the `Send()` function.
+
+```go
+// Index sends an email.
+func Index(w http.ResponseWriter, r *http.Request) {
+	c := flight.Context(w, r)
+
+	err := c.Config.Email.Send("This is the subject", "This is the body!")
+	if err != nil {
+		c.FlashError(err)
+		return
+	}
+}
+```
+
 ## Code Generation
 
-A new **lib** package can be generated with the thread-safe configuration using
-this command: `jay generate lib/default package:value`
+A new **lib** package can be generated using this command: `jay generate lib/default package:value`

@@ -19,7 +19,7 @@ provider = "GitHub"
 repo_url = "https://github.com/blue-jay/blueprint"
 
 short_title = "Blue Jay"
-version = "0.6-charlie"
+version = "0.8-delta"
 logo = "images/bluejaylogo.png"
 favicon = "images/favicon.ico"
 

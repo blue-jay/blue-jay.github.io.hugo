@@ -35,7 +35,7 @@ not have a .gen pair in the same folder, then it has a **config.parse** value
 of **collection** which means it references other .json files with a
 **config.parse** value of **single**.
 
-The **flight** package is a helper package that reduces a lot of code from the
+The **lib/flight** package is a helper package that reduces a lot of code from the
 controller. It contains functions to simplify the use of flash messages,
 form validation, form repopulation, and URL parameters.
 
@@ -282,15 +282,13 @@ not to parse in the single.json file by setting the value of **config.parse** to
 {{define "title"}}{{end}}
 {{define "head"}}{{end}}
 {{define "content"}}
-<div class="container">
 	<div class="page-header">
 		<h1>{{template "title" .}}</h1>
 	</div>
-	
+
 	<p>Not Implemented</p>
-	
+
 	{{template "footer" .}}
-</div>
 {{end}}
 {{define "foot"}}{{end}}
 ```
@@ -325,15 +323,13 @@ parsed, just copied.
 {{define "title"}}{{end}}
 {{define "head"}}{{end}}
 {{define "content"}}
-<div class="container">
 	<div class="page-header">
 		<h1>{{template "title" .}}</h1>
 	</div>
-	
+
 	<p>Not Implemented</p>
-	
+
 	{{template "footer" .}}
-</div>
 {{end}}
 {{define "foot"}}{{end}}
 ```

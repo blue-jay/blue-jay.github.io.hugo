@@ -33,40 +33,6 @@ func LoadRoutes() {
 
 Here is the **Load()** function from the **controller/notepad** package:
 
-```go
-func Load() {
-	// Add middleware that disallows anonymous access
-	c := router.Chain(acl.DisallowAnon)
-
-	// Map HTTP methods and URLs to functions with the middleware chain
-	router.Get("/notepad", Index, c...)
-	router.Get("/notepad/create", Create, c...)
-	router.Post("/notepad/create", Store, c...)
-	router.Get("/notepad/view/:id", Show, c...)
-	router.Get("/notepad/edit/:id", Edit, c...)
-	router.Patch("/notepad/edit/:id", Update, c...)
-	router.Delete("/notepad/:id", Destroy, c...)
-}
-```
-
-There are a few things to note here. The **router** references the
-**lib/router** package which is a thread-safe wrapper for the
-[husobee/vestigo](http://github.com/husobee/vestigo) package.
-The **router.Chain()** function uses the
-[justinas/alice](http://github.com/justinas/alice) package
-to help with middleware chaining.
-
-This is one way to build your wrapper packages that live in the **lib** folder.
-If you want to use a different router, you can modify the **lib/router**
-package easily and will only have to change a few lines of code in your
-controllers.
-
-## Static Assets
-
-You can serve the **asset/static** folder with your CSS, JavaScript, and images so
-they are accessible. You would access an asset like this:
-`http://example.com/static/favicon.ico`
-
 [Source](https://github.com/blue-jay/blueprint/blob/master/controller/static/static.go)
 ```go
 // Package static serves static files like CSS, JavaScript, and images.
@@ -78,8 +44,8 @@ import (
 	"path"
 
 	"github.com/blue-jay/blueprint/controller/status"
+	"github.com/blue-jay/blueprint/lib/flight"
 
-	"github.com/blue-jay/core/asset"
 	"github.com/blue-jay/core/router"
 )
 
@@ -91,8 +57,10 @@ func Load() {
 
 // Index maps static files.
 func Index(w http.ResponseWriter, r *http.Request) {
+	c := flight.Context(w, r)
+
 	// File path
-	path := path.Join(asset.Config().Folder, r.URL.Path[1:])
+	path := path.Join(c.Config.Asset.Folder, r.URL.Path[1:])
 
 	// Only serve files
 	if fi, err := os.Stat(path); err == nil && !fi.IsDir() {
@@ -102,6 +70,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 
 	status.Error404(w, r)
 }
+
 ```
 
 ## Error Pages
@@ -118,8 +87,8 @@ package status
 import (
 	"net/http"
 
+	"github.com/blue-jay/blueprint/lib/flight"
 	"github.com/blue-jay/core/router"
-	"github.com/blue-jay/core/view"
 )
 
 // Load the routes.
@@ -130,8 +99,9 @@ func Load() {
 
 // Error404 - Page Not Found.
 func Error404(w http.ResponseWriter, r *http.Request) {
+	c := flight.Context(w, r)
 	w.WriteHeader(http.StatusNotFound)
-	v := view.New("status/index")
+	v := c.View.New("status/index")
 	v.Vars["title"] = "404 Not Found"
 	v.Vars["message"] = "Page could not be found."
 	v.Render(w, r)
@@ -140,11 +110,13 @@ func Error404(w http.ResponseWriter, r *http.Request) {
 // Error405 - Method Not Allowed.
 func Error405(allowedMethods string) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
+		c := flight.Context(w, r)
 		w.WriteHeader(http.StatusMethodNotAllowed)
-		v := view.New("status/index")
+		v := c.View.New("status/index")
 		v.Vars["title"] = "405 Method Not Allowed"
 		v.Vars["message"] = "Method is not allowed."
 		v.Render(w, r)
 	}
 }
+...
 ```

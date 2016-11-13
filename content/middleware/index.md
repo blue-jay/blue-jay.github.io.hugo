@@ -11,8 +11,8 @@ header modification. Middleware is either applied to every request (like for
 request logging) or specified routes (like for ACLs).
 
 There are a few pieces of middleware included. The package called **csrf**
-protects against Cross-Site Request Forgery attacks. 
-The **logrequest** package will log every request made against the 
+protects against Cross-Site Request Forgery attacks.
+The **logrequest** package will log every request made against the
 website to the console. The **rest** package allows the HTTP method to be
 changed during a form submission to DELETE or PATCH instead of POST.
 
@@ -82,7 +82,7 @@ where the controller uses the **router.ChainHandler()** function.
 The function is a wrapper for
 the [justinas/alice](https://github.com/justinas/alice) package which makes
 using middleware more scalable and a little "prettier". If you look at the
-[boot](https://github.com/blue-jay/blueprint/blob/master/boot/boot.go)
+[lib/boot](https://github.com/blue-jay/blueprint/blob/master/lib/boot/middleware.go)
 package, you'll see the **ChainHandler()** function. There is also a **Chain()**
 function that can be used to chain middleware for routes or to pass to
 **ChainHandler()**.
@@ -121,7 +121,7 @@ the application calls **boot.SetUpMiddleware(router.Instance())** which
 applies the middleware to the router. The middleware is called on every
 request.
 
-[Source](https://github.com/blue-jay/blueprint/blob/master/boot/boot.go)
+[Source](https://github.com/blue-jay/blueprint/blob/master/lib/boot/middleware.go)
 ```go
 // SetUpMiddleware contains the middleware that applies to every request.
 func SetUpMiddleware(h http.Handler) http.Handler {

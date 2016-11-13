@@ -14,15 +14,17 @@ The project is organized into the following folders:
 asset/
 |----dynamic/    - private assets like SASS files, single JavaScript files, and logo.png for favicon generation
 |----static/     - public assets like CSS, JavaScript, and favicon.ico for Android, Apple, etc
-boot/            - package for initial set up of the application
 controller/	     - packages with routes and application logic
 filestorage/     - files uploaded from an HTML form
-generate/	     - template pairs (.gen and .json) for generating code using jay
+generate/	       - template pairs (.gen and .json) for generating code using jay
 lib/             - packages you'll build that are used by the application (recommended to build with minimum dependencies)
+|----boot/       - package for registering services and setting up all the components
+|----env/        - package that holds the structure for the application settings
+|----flight/     - package with a context that can be used by controllers to access application settings
 middleware/      - packages that return a http.Handler to wrap around routes for ACL, request logging, etc
 migration/       - migration database files
 |----mysql/      - MySQL files for migrating database up and down
-model/		     - packages with database queries and structs matching tables
+model/		       - packages with database queries and structs matching tables
 view/            - HTML templates parsed using the Go html/template package
 viewfunc/        - packages that return a template.FuncMap for use in views
 viewmodify/      - packages that modify view prior to rendering to add varibles like CSRF token and auth level

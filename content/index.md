@@ -21,7 +21,7 @@ register page, about page, and a simple notepad to demonstrate GET, POST,
 PATCH, and DELETE operations.
 
 The entrypoint for the web app is **blueprint.go** which uses the **boot**
-package to load (at boot) the application settings, create the session store,
+package to load the application settings, create the session store,
 connect to the database, set up the views, load the routes, attach the
 middleware, and then start the web server.
 
@@ -42,7 +42,7 @@ Jay is a command-line tool that pairs nicely with Blueprint. It has find/replace
 functionality to make code refactoring is a little easier. It performs database
 migration to easily update your database when sharing code
 between teams. Jay provides template-based code generation that allows you to
-build files like controllers, models, middleware, or even multiple views. 
+build files like controllers, models, middleware, or even multiple views.
 All templates (*.gen files) are parsed using
 the **text/template** package from the Go standard library and all generation
 instructions (*.json files) allow you to specify which variables to pass via
@@ -96,7 +96,7 @@ There are also more detailed guides available by operating system:
 
 ## Why Blue Jay?
 
-After 300 stars on GitHub, I realized people really liked the boilerplate 
+After 300 stars on GitHub, I realized people really liked the boilerplate
 Model-View-Controller (MVC) web application in Go called
 [gowebapp](https://github.com/josephspurrier/gowebapp) so I rewrote it with
 better documentation.
@@ -173,5 +173,5 @@ language.
 
 ## Feedback
 
-All feedback is welcome. Let me know if you have any suggestions, questions, or criticisms. 
+All feedback is welcome. Let me know if you have any suggestions, questions, or criticisms.
 If something is not idiomatic to Go, please let me know know so we can make it better.

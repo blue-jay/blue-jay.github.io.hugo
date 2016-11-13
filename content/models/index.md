@@ -5,77 +5,139 @@ weight: 50
 
 ## Basic Usage
 
-It's a good idea to abstract the database layer out so if you need to make 
+It's a good idea to abstract the database layer out so if you need to make
 changes, you don't have to look through the controllers to find the queries. All
 the queries are stored in the **model** folder.
 
 Blue Jay supports MySQL by default, but can easily be expanded to use other
-database systems.
+database systems. There is also a PostgreSQL package you can use
+[here](https://github.com/blue-jay/core/blob/master/storage/driver/postgresql/postgresql.go).
+The instructions are at the bottom of this page.
 
 ## Connect to the database
 
 You only need to connect to the database once. The connection pool is
-automatically handled by the [go-sql-driver/mysql](https://github.com/go-sql-driver/mysql)
-package.
+handled by the [go-sql-driver/mysql](https://github.com/go-sql-driver/mysql)
+package. The connection is started by the **lib/boot** package:
 
+[Source](https://github.com/blue-jay/blueprint/blob/master/lib/boot/boot.go)
 ```go
-// Connect to database
-database.Connect(config.Database)
+// Connect to the MySQL database
+mysqlDB, _ := config.MySQL.Connect(true)
 ```
 
-## Create an Item
+## Model Layout
 
-Use **database.SQL.Exec()** to create an item or a table.
+Every model should have a table name, a struct to represent the columns, and a
+Connection interface. The interface makes the model much more testable so it can
+be easily mocked and interchanged.
 
-### Controller
-```go
-_, err := note.Create(r.FormValue("note"), userID)
-if err != nil {
-	log.Println(err)
-	sess.AddFlash(flash.Info{"An error occurred on the server. Please try again later.", flash.Error})
-	sess.Save(r, w)
-	Create(w, r)
-	return
+A good interface for each model looks like this:
+
+```
+// Connection is an interface for making queries.
+type Connection interface {
+	Exec(query string, args ...interface{}) (sql.Result, error)
+	Get(dest interface{}, query string, args ...interface{}) error
+	Select(dest interface{}, query string, args ...interface{}) error
 }
 ```
 
-### Model
-```go
+And a good create function looks like this:
+
+```
 // Create adds an item.
-func Create(name string, userID string) (sql.Result, error) {
-	result, err := database.SQL.Exec(fmt.Sprintf(`
+func Create(db Connection, name string, userID string) (sql.Result, error) {
+	result, err := db.Exec(fmt.Sprintf(`
 		INSERT INTO %v
 		(name, user_id)
 		VALUES
 		(?,?)
 		`, table),
 		name, userID)
-	return result, model.StandardError(err)
+	return result, err
+}
+```
+
+# CRUD Operations
+
+Below are common operations and how controllers can interact with models.
+All the controller functions are from
+[notepad.go](https://github.com/blue-jay/blueprint/blob/master/controller/notepad/notepad.go)
+and the model functions
+are from [note.go](https://github.com/blue-jay/blueprint/blob/master/model/note/note.go).
+
+## Create an Item
+
+Use **db.Exec()** to create an item or a table.
+
+### Controller
+```go
+// Store handles the create form submission.
+func Store(w http.ResponseWriter, r *http.Request) {
+	c := flight.Context(w, r)
+
+	if !c.FormValid("name") {
+		Create(w, r)
+		return
+	}
+
+	_, err := note.Create(c.DB, r.FormValue("name"), c.UserID)
+	if err != nil {
+		c.FlashError(err)
+		Create(w, r)
+		return
+	}
+
+	c.FlashSuccess("Item added.")
+	c.Redirect(uri)
+}
+```
+
+### Model
+```go
+// Create adds an item.
+func Create(db Connection, name string, userID string) (sql.Result, error) {
+	result, err := db.Exec(fmt.Sprintf(`
+		INSERT INTO %v
+		(name, user_id)
+		VALUES
+		(?,?)
+		`, table),
+		name, userID)
+	return result, err
 }
 ```
 
 ## Get an Item by Item ID
 
-Use **database.SQL.Get()** to get a single item.
+Use **db.Get()** to get a single item.
 
 ### Controller
 ```go
-item, err := note.ByID(params.ByName("id"), userID)
-if err != nil { // If the note doesn't exist
-	log.Println(err)
-	sess.AddFlash(flash.Info{"An error occurred on the server. Please try again later.", flash.Error})
-	sess.Save(r, w)
-	http.Redirect(w, r, uri, http.StatusFound)
-	return
+// Show displays a single item.
+func Show(w http.ResponseWriter, r *http.Request) {
+	c := flight.Context(w, r)
+
+	item, _, err := note.ByID(c.DB, c.Param("id"), c.UserID)
+	if err != nil {
+		c.FlashError(err)
+		c.Redirect(uri)
+		return
+	}
+
+	v := c.View.New("note/show")
+	v.Vars["item"] = item
+	v.Render(w, r)
 }
 ```
 
 ### Model
 ```go
 // ByID gets item by ID.
-func ByID(ID string, userID string) (Item, error) {
+func ByID(db Connection, ID string, userID string) (Item, bool, error) {
 	result := Item{}
-	err := database.SQL.Get(&result, fmt.Sprintf(`
+	err := db.Get(&result, fmt.Sprintf(`
 		SELECT id, name, user_id, created_at, updated_at, deleted_at
 		FROM %v
 		WHERE id = ?
@@ -84,62 +146,80 @@ func ByID(ID string, userID string) (Item, error) {
 		LIMIT 1
 		`, table),
 		ID, userID)
-	return result, model.StandardError(err)
+	return result, err == sql.ErrNoRows, err
 }
 ```
 
 ## Get Items by User ID
 
-Use **database.SQL.Select()** to get multiple items.
+Use **db.Select()** to get multiple items.
 
 ### Controller
 ```go
-items, err := note.ByUserID(userID)
-if err != nil {
-	log.Println(err)
-	sess.AddFlash(flash.Info{"An error occurred on the server. Please try again later.", flash.Error})
-	sess.Save(r, w)
-	items = []note.Item{}
+// Index displays the items.
+func Index(w http.ResponseWriter, r *http.Request) {
+	c := flight.Context(w, r)
+
+	items, _, err := note.ByUserID(c.DB, c.UserID)
+	if err != nil {
+		c.FlashError(err)
+		items = []note.Item{}
+	}
+
+	v := c.View.New("note/index")
+	v.Vars["items"] = items
+	v.Render(w, r)
 }
 ```
 
 ### Model
 ```go
 // ByUserID gets all entities for a user.
-func ByUserID(userID string) ([]Item, error) {
+func ByUserID(db Connection, userID string) ([]Item, bool, error) {
 	var result []Item
-	err := database.SQL.Select(&result, fmt.Sprintf(`
+	err := db.Select(&result, fmt.Sprintf(`
 		SELECT id, name, user_id, created_at, updated_at, deleted_at
 		FROM %v
 		WHERE user_id = ?
 			AND deleted_at IS NULL
 		`, table),
 		userID)
-	return result, model.StandardError(err)
+	return result, err == sql.ErrNoRows, err
 }
 ```
 
 ## Update an Item
 
-Use **database.SQL.Exec()** to update one or more items.
+Use **db.Exec()** to update one or more items.
 
 ### Controller
 ```go
-_, err := note.Update(r.FormValue("note"), params.ByName("id"), userID)
-if err != nil {
-	log.Println(err)
-	sess.AddFlash(flash.Info{"An error occurred on the server. Please try again later.", flash.Error})
-	sess.Save(r, w)
-	Edit(w, r)
-	return
+// Update handles the edit form submission.
+func Update(w http.ResponseWriter, r *http.Request) {
+	c := flight.Context(w, r)
+
+	if !c.FormValid("name") {
+		Edit(w, r)
+		return
+	}
+
+	_, err := note.Update(c.DB, r.FormValue("name"), c.Param("id"), c.UserID)
+	if err != nil {
+		c.FlashError(err)
+		Edit(w, r)
+		return
+	}
+
+	c.FlashSuccess("Item updated.")
+	c.Redirect(uri)
 }
 ```
 
 ### Model
 ```go
 // Update makes changes to an existing item.
-func Update(name string, ID string, userID string) (sql.Result, error) {
-	result, err := database.SQL.Exec(fmt.Sprintf(`
+func Update(db Connection, name string, ID string, userID string) (sql.Result, error) {
+	result, err := db.Exec(fmt.Sprintf(`
 		UPDATE %v
 		SET name = ?
 		WHERE id = ?
@@ -148,7 +228,7 @@ func Update(name string, ID string, userID string) (sql.Result, error) {
 		LIMIT 1
 		`, table),
 		name, ID, userID)
-	return result, model.StandardError(err)
+	return result, err
 }
 ```
 
@@ -159,22 +239,26 @@ timestamp.
 
 ### Controller
 ```go
-_, err := note.Delete(params.ByName("id"), userID)
-if err != nil {
-	log.Println(err)
-	sess.AddFlash(flash.Info{"An error occurred on the server. Please try again later.", flash.Error})
-	sess.Save(r, w)
-} else {
-	sess.AddFlash(flash.Info{"Item deleted.", flash.Notice})
-	sess.Save(r, w)
+// Destroy handles the delete form submission.
+func Destroy(w http.ResponseWriter, r *http.Request) {
+	c := flight.Context(w, r)
+
+	_, err := note.DeleteSoft(c.DB, c.Param("id"), c.UserID)
+	if err != nil {
+		c.FlashError(err)
+	} else {
+		c.FlashNotice("Item deleted.")
+	}
+
+	c.Redirect(uri)
 }
 ```
 
 ### Model
 ```go
 // Delete marks an item as removed.
-func Delete(ID string, userID string) (sql.Result, error) {
-	result, err := database.SQL.Exec(fmt.Sprintf(`
+func DeleteSoft(db Connection, ID string, userID string) (sql.Result, error) {
+	result, err := db.Exec(fmt.Sprintf(`
 		UPDATE %v
 		SET deleted_at = NOW()
 		WHERE id = ?
@@ -183,7 +267,7 @@ func Delete(ID string, userID string) (sql.Result, error) {
 		LIMIT 1
 		`, table),
 		ID, userID)
-	return result, model.StandardError(err)
+	return result, err
 }
 ```
 
@@ -193,62 +277,76 @@ A hard delete removes the item from the database.
 
 ### Controller
 ```go
-_, err := note.DeleteHard(params.ByName("id"), userID)
-if err != nil {
-	log.Println(err)
-	sess.AddFlash(flash.Info{"An error occurred on the server. Please try again later.", flash.Error})
-	sess.Save(r, w)
-} else {
-	sess.AddFlash(flash.Info{"Item deleted.", flash.Notice})
-	sess.Save(r, w)
+// Destroy handles the delete form submission.
+func Destroy(w http.ResponseWriter, r *http.Request) {
+	c := flight.Context(w, r)
+
+	_, err := note.DeleteHard(c.DB, c.Param("id"), c.UserID)
+	if err != nil {
+		c.FlashError(err)
+	} else {
+		c.FlashNotice("Item deleted.")
+	}
+
+	c.Redirect(uri)
 }
 ```
 
 ### Model
 ```go
 // DeleteHard removes an item.
-func DeleteHard(ID string, userID string) (sql.Result, error) {
-	result, err := database.SQL.Exec(fmt.Sprintf(`
+func DeleteHard(db Connection, ID string, userID string) (sql.Result, error) {
+	result, err := db.Exec(fmt.Sprintf(`
 		DELETE FROM %v
 		WHERE id = ?
 			AND user_id = ?
 			AND deleted_at IS NULL
 		`, table),
 		ID, userID)
-	return result, model.StandardError(err)
+	return result, err
 }
 ```
 
-## Handling Errors
+## PostgreSQL Support
+To use PostgreSQL, you need to a few lines of code. The migration support is
+not built into [Jay](https://github.com/blue-jay/jay) yet so you'll have to run
+them manually.
 
-You can define your own errors for your models in the
-[model](https://github.com/blue-jay/blueprint/blob/master/model/model.go)
-package. This is another abstraction that makes it easy to change out database
-systems without having to rewrite code in your controllers.
+Add the PostgreSQL structure to the env.json.example file:
+```json
+"PostgreSQL":{
+	"Username":"root",
+	"Password":"",
+	"Database":"blueprint",
+	"Hostname":"127.0.0.1",
+	"Port":5432,
+	"Parameter":"",
+	"MigrationFolder":"migration/postgresql",
+	"Extension":"sql"
+},
+```
 
-You can manage the errors like this:
-
+Ensure the JSON is readable by to the **Info** struct in **lib/env** so add this
+line:
 ```go
-var (
-	// ErrNoResult is when no results are found.
-	ErrNoResult = errors.New("Result not found.")
-)
-
-// StandardError returns a model defined error.
-func StandardError(err error) error {
-	if err == sql.ErrNoRows {
-		return ErrNoResult
-	}
-
-	return err
-}
+PostgreSQL postgresql.Info `json:"PostgreSQL"`
 ```
 
-In your controller, you can check the error like this:
-
+Add these lines to the **RegisterServices()** function in **lib/boot**:
 ```go
-if err == model.ErrNoResult {
-	sess.AddFlash(flash.Info{"Password is incorrect", flash.Warning})
-	sess.Save(r, w)
-}
+// Connect to the PostgreSQL database
+postgresqldb, _ := config.PostgreSQL.Connect(true)
 ```
+
+If you want to replace MySQL, you can change the line at the bottom of the
+**RegisterServices()** function in **lib/boot** to pass PostgreSQL instead of
+MySQL:
+```go
+// Store the database connection in flight
+flight.StoreDB(postgresqldb)
+```
+
+If you want to add instead of replacing MySQL, you need to:
+- Add a new function to the **lib/flight** package similar to **StoreDB()**
+- And a new line to the **Info** struct in the **lib/flight**
+- Add the new variable to the **Context()** function in **lib/flight**
