@@ -160,6 +160,52 @@ Template  - Template struct in core/view
 View      - Info struct in core/view
 ```
 
+## Using Flight
+
+The **flight** package provides access to the session variables, env.json settings,
+database connections, views, and general shortcuts. It's mostly designed for
+controllers, but it can be used by other packages as well.
+
+To use package, you would call the **flight.Context()** function like this:
+
+```go
+// Index displays the items.
+func Index(w http.ResponseWriter, r *http.Request) {
+	c := flight.Context(w, r)
+
+	items, _, err := note.ByUserID(c.DB, c.UserID)
+	if err != nil {
+		c.FlashError(err)
+		items = []note.Item{}
+	}
+
+	v := c.View.New("note/index")
+	v.Vars["items"] = items
+	v.Render(w, r)
+}
+```
+
+Flight needs a **http.ResponseWriter** and a **http.Request** so it can access
+the sessions variables and provide shortcuts for the following tasks:
+
+- reading URL parameters: c.Param(name string)
+- redirecting to a page: c.Redirect(urlStr string)
+- validation a form and sets a flash message: c.FormValid(fields ...string)
+- repopulating a form: c.Repopulate(v map[string]interface{}, fields ...string)
+- setting flash messages and then saving the session: c.FlashSuccess(message string)
+
+Flight also provides access to the following:
+
+- configuration settings from env.json: `c.Config.Asset.Folder`
+- session: `c.Sess.Values["email"]`
+- current user ID: `c.UserID`
+- view package: `c.View.New("home/index")`
+- database connection: `items, _, err := note.ByUserID(c.DB, c.UserID)`
+
+It is not a requirement to use the **flight** package, but it makes working
+with the different web components much easier. Feel free to modify the package
+to fit your needs. Just make sure it is thread-safe.
+
 ## Enable HTTPS
 
 To enable HTTPS:
