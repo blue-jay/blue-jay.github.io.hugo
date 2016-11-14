@@ -177,14 +177,14 @@ There are a few functions that are included to make working with the templates
 and static files easier:
 
 ```html
-<!-- CSS files with timestamps -->
-{{CSS "static/css/normalize3.0.0.min.css"}}
-<!-- parses to -->
-<link rel="stylesheet" type="text/css" href="/static/css/normalize3.0.0.min.css?1435528339" />
+<!-- CSS file with media attribute -->
+{{CSS "static/css/normalize3.0.0.min.css" "all"}}
+<!-- parses with timestamp to -->
+<link media="all" rel="stylesheet" type="text/css" href="/static/css/normalize3.0.0.min.css?1435528339" />
 
-<!-- JS files with timestamps -->
+<!-- JS file -->
 {{JS "static/js/jquery1.11.0.min.js"}}
-<!-- parses to -->
+<!-- parses with timestamp to -->
 <script type="text/javascript" src="/static/js/jquery1.11.0.min.js?1435528404"></script>
 
 <!-- Hyperlinks -->
