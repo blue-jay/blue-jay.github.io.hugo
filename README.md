@@ -2,4 +2,4 @@
 
 Website for Blue Jay - Go Toolkit for the Web
 
-Hugo Source for http://blue-jay.github.io/
+Hugo Source for https://blue-jay.github.io/
