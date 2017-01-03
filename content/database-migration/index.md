@@ -15,9 +15,13 @@ Each incremental change should have a set of two files: an 'up' file and a
 database you add features or fix bugs in your database. The 'down' file contains
 the code to remove the change or undo it.
 
+More than one migration can now be run on a database. You just have to specify
+a different table value in the env.json file under the MySQL.Migration.Table key.
+
 **Note 1**: The `jay migrate` commands requires the environment variable,
 **JAYCONFIG**, to point to the env.json file path. The migration folder is specified
-in the env.json file under **MySQL.MigrationFolder**.
+in the env.json file under **MySQL.MigrationFolder**. If the environment variable
+is not set, you can specify the --config or -c flag and pass the path to env.json.
 
 **Note 2**: Make sure you do not create any migrations with a date earlier than
 any applied migrations. Jay will not go back and apply them. They must be

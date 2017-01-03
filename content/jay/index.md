@@ -24,6 +24,7 @@ The available flags throughout are:
 
 - `-h` or `--help` for help documentation
 - `-v` or `--version` for version information
+- `-c` or `--config` to specify the env.json config file (otherwise JAYCONFIG environment variable will be used)
 
 The available commands are:
 
