@@ -34,7 +34,7 @@ so the files can be accessed like this:
 
 Check out the [Controllers](/controllers) and
 [Views](/views/#included-functions) pages for how
-the files are served and how timestamps are append to them for cach management.
+the files are served and how timestamps are append to them for cache management.
 
 If you make changes to any of the files in the **dynamic** folder, you still
 need a way to compile/minify them and then move them to the **static** folder
