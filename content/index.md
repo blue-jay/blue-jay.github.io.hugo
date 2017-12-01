@@ -39,7 +39,7 @@ generation of favicons, and copying of static assets like Bootstrap and jQuery
 (which are managed by npm) to the **asset/static** folder.
 
 Jay is a command-line tool that pairs nicely with Blueprint. It has find/replace
-functionality to make code refactoring is a little easier. It performs database
+functionality to make code refactoring a little easier. It performs database
 migration to easily update your database when sharing code
 between teams. Jay provides template-based code generation that allows you to
 build files like controllers, models, middleware, or even multiple views.
